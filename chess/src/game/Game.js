@@ -26,6 +26,13 @@ class Game extends Component {
         this.loader = null;
         this.dragging = false;
         this.data = null;
+        this.board = {
+            castlingForWhite: null,
+            castlingForBlack: null,
+            en_passants: [],
+            turn: 0,
+            data: []
+        };
     }
 
     updatePixiCnt =(element)=> {
@@ -113,7 +120,7 @@ class Game extends Component {
         // Qk - white can queensize, black can kingsize
         // max. option is KQkq
         // next symbol is en-passant possibilities
-        let startingFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
+        let startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         this.parseFen(startingFen);
     }
 
@@ -177,7 +184,51 @@ class Game extends Component {
                 }
             }
         }
+        this.parseFen2(fen);
+    }
 
+    parseFen2(fen) {
+
+        // saving data to simple board with fen representations
+        let lines = fen.split("/");
+        let xBoard = 0;
+        let yBoard = 0;
+
+        for(let i=0; i<lines.length; i++) {
+            let boardLine = [];
+            for(let j=0; j<lines[i].length; j++) {
+
+                let piece = lines[i][j];
+
+                if(this.isNumeric(piece)) {
+                    let w = 0;
+                    while(w < parseInt(piece)) {
+                        boardLine.push("0");
+                        w++;
+                    }
+                }
+                else {
+                    boardLine.push(piece);
+                }
+
+            }
+            this.board.data.push(boardLine);
+        }
+    }
+
+    isNumeric(number) {
+        if(number === "1"
+        || number === "2"
+        || number === "3"
+        || number === "4"
+        || number === "5"
+        || number === "6"
+        || number === "7"
+        || number === "8")
+        return true;
+        else {
+            return false;
+        }
     }
 
 
