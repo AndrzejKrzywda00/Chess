@@ -32,16 +32,6 @@ class Game extends Component {
             turn: 0,
             data: []
         };
-        this.possible_moves = [
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0]
-        ];
         this.startingX = null;
         this.startingY = null;
     }
