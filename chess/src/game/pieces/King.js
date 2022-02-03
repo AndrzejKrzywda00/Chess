@@ -6,8 +6,4 @@ class King extends Piece {
         this.canCastleQueenSide = true;
     }
 
-    calculatePossibleMoves(board) {
-
-    }
-
 }

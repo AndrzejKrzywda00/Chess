@@ -125,6 +125,18 @@ class Game extends Component {
     onDragEnd(event) {
         let newX = Math.floor(this.data.getLocalPosition(this.parent).x/100);
         let newY = Math.floor(this.data.getLocalPosition(this.parent).y/100);
+        if(newX < 0) {
+            newX = 0;
+        }
+        if(newX > 7) {
+            newX = 7;
+        }
+        if(newY > 7) {
+            newY = 7;
+        }
+        if(newY < 0) {
+            newY = 0;
+        }
         this.x = newX*100+50;
         this.y = newY*100+50;
         this.data = null;
@@ -159,6 +171,8 @@ class Game extends Component {
                         .on('pointermove',this.onDragMove);
                     this.app.stage.addChild(piece);
                 } catch (Exception) {
+                    let addValue = lines[i][j].parseInt;
+                    j+=addValue-1;
                     continue;
                 }
             }

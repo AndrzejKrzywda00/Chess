@@ -4,4 +4,8 @@ class Piece {
         this.color = props.color;
     }
 
+    calculatePossibleMoves(board) {
+
+    }
+
 }
