@@ -200,23 +200,27 @@ class Game extends Component {
 
                 let piece = lines[i][j];
 
-                if(this.isNumeric(piece)) {
+                // creating empty spaces
+                if(this.isFENNumeric(piece)) {
                     let w = 0;
                     while(w < parseInt(piece)) {
                         boardLine.push("0");
                         w++;
                     }
                 }
+                // adding a piece symbol
                 else {
                     boardLine.push(piece);
                 }
 
             }
+            // adding a line to the 2d board array
             this.board.data.push(boardLine);
         }
     }
 
-    isNumeric(number) {
+    // this function checks if the number is supported in fen
+    isFENNumeric(number) {
         if(number === "1"
         || number === "2"
         || number === "3"
@@ -230,8 +234,7 @@ class Game extends Component {
             return false;
         }
     }
-
-
+    
     calculatePossibleMoves() {
         // this function shall calculate board with all possible moves
         // 0 for free, 1 for taken
