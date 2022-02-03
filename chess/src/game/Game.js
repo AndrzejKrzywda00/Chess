@@ -42,7 +42,16 @@ class Game extends Component {
             [0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0]
         ];
+        this.startingX = null;
+        this.startingY = null;
     }
+
+    /*
+    Functions that should be added
+    - remoing the pieces when taken - so need to have 2d array with Sprites saved to remove them
+    - storing array of pieces to make assessments if move can be done
+    - also for check, stealmate, and mate options
+     */
 
     updatePixiCnt =(element)=> {
         this.pixi_cnt = element;
@@ -161,6 +170,8 @@ class Game extends Component {
     }
 
     onDragStart(event) {
+        this.startingX = this.x;
+        this.startingY = this.y;
         this.data = event.data;
         this.dragging = true;
     }
@@ -293,16 +304,6 @@ class Game extends Component {
         // once again for en-passant attack on pawn, there should be information
         if(piece == "p" || piece == "P") {
             this.addPossibleMovesForPawn(i,j);
-        }
-    }
-
-    addPossibleMovesForPawn(i, j) {
-        if(i === 6) {
-            this.possible_moves[i-1][j] = 1;
-            this.possible_moves[i-2][j] = 1;
-        }
-        else {
-            this.possible_moves[i-1][j] = 1;
         }
     }
 
