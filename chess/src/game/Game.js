@@ -27,12 +27,21 @@ class Game extends Component {
         this.dragging = false;
         this.data = null;
         this.board = {
-            castlingForWhite: null,
-            castlingForBlack: null,
+            castlingRights: null,
             en_passants: [],
             turn: 0,
             data: []
         };
+        this.possible_moves = [
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0]
+        ];
     }
 
     updatePixiCnt =(element)=> {
@@ -120,8 +129,35 @@ class Game extends Component {
         // Qk - white can queensize, black can kingsize
         // max. option is KQkq
         // next symbol is en-passant possibilities
-        let startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+        let startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk -";
+        //let alternateFen = "8/8/8/4p1K1/2k1P3/8/8/8 b - -";
         this.parseFen(startingFen);
+
+        let rows = 8;
+        let columns = 8;
+        let board = this.board.data;
+
+        for(let i=0; i<rows; i++) {
+            for(let j=0; j<columns; j++) {
+                try {
+                    let texture = this.loader.resources[board[i][j]].texture;
+                    let piece = new PIXI.Sprite(texture);
+                    piece.interactive = true;
+                    piece.buttonMode = true;
+                    piece.roundPixels = false;
+                    piece.anchor.set(0.5);
+                    piece.setTransform(100*j+50,100*i+50,0.10,0.10);
+                    piece
+                        .on('pointerdown',this.onDragStart)
+                        .on('pointerup',this.onDragEnd)
+                        .on('pointerupoutside',this.onDragEnd)
+                        .on('pointermove',this.onDragMove);
+                    this.app.stage.addChild(piece);
+                } catch (exception) {
+                    continue;
+                }
+            }
+        }
     }
 
     onDragStart(event) {
@@ -160,35 +196,6 @@ class Game extends Component {
 
     parseFen(fen) {
 
-        let lines = fen.split("/");
-        for(let i=0; i<lines.length; i++) {
-            for(let j=0; j<lines[i].length; j++) {
-                try {
-                    let texture = this.loader.resources[lines[i][j]].texture;
-                    let piece = new PIXI.Sprite(texture);
-                    piece.interactive = true;
-                    piece.buttonMode = true;
-                    piece.roundPixels = false;
-                    piece.anchor.set(0.5);
-                    piece.setTransform(100*j+50,100*i+50,0.10,0.10);
-                    piece
-                        .on('pointerdown',this.onDragStart)
-                        .on('pointerup',this.onDragEnd)
-                        .on('pointerupoutside',this.onDragEnd)
-                        .on('pointermove',this.onDragMove);
-                    this.app.stage.addChild(piece);
-                } catch (Exception) {
-                    let addValue = lines[i][j].parseInt;
-                    j+=addValue-1;
-                    continue;
-                }
-            }
-        }
-        this.parseFen2(fen);
-    }
-
-    parseFen2(fen) {
-
         // saving data to simple board with fen representations
         let lines = fen.split("/");
         let xBoard = 0;
@@ -196,24 +203,62 @@ class Game extends Component {
 
         for(let i=0; i<lines.length; i++) {
             let boardLine = [];
-            for(let j=0; j<lines[i].length; j++) {
 
-                let piece = lines[i][j];
+            if(i == 7) {
 
-                // creating empty spaces
-                if(this.isFENNumeric(piece)) {
-                    let w = 0;
-                    while(w < parseInt(piece)) {
-                        boardLine.push("0");
-                        w++;
+                let lastPart = lines[i].split(" ");
+                let lastLine = lastPart[0];
+
+                // adding last line information in normal manner
+                for(let k=0; k<lastLine.length; k++) {
+
+                    let piece = lastLine[k];
+
+                    if(this.isFENNumeric(piece)) {
+                        let w = 0;
+                        while(w < parseInt(piece)) {
+                            boardLine.push("0");
+                            w++;
+                        }
+                    }
+                    else {
+                        boardLine.push(piece);
                     }
                 }
-                // adding a piece symbol
-                else {
-                    boardLine.push(piece);
+
+                // parsing rest of the data from the FEN
+                this.board.turn = lastPart[1];
+
+                // castling rights
+                this.board.castlingRights = lastPart[2];
+
+                // saving raw en passants possibilities
+                this.board.en_passants = lastPart[3];
+            }
+
+            else {
+
+                for(let j=0; j<lines[i].length; j++) {
+
+                    let piece = lines[i][j];
+
+                    // creating empty spaces
+                    if(this.isFENNumeric(piece)) {
+                        let w = 0;
+                        while(w < parseInt(piece)) {
+                            boardLine.push("0");
+                            w++;
+                        }
+                    }
+                    // adding a piece symbol
+                    else {
+                        boardLine.push(piece);
+                    }
+
                 }
 
             }
+
             // adding a line to the 2d board array
             this.board.data.push(boardLine);
         }
@@ -234,8 +279,8 @@ class Game extends Component {
             return false;
         }
     }
-    
-    calculatePossibleMoves() {
+
+    calculatePossibleMoves(piece, i, j) {
         // this function shall calculate board with all possible moves
         // 0 for free, 1 for taken
         // obviously 1 stands for spaces taken with other pieces, including one which is dragged
@@ -246,6 +291,19 @@ class Game extends Component {
         // no castling afer move
         // but king can be dragged over rook when has castling opportunity
         // once again for en-passant attack on pawn, there should be information
+        if(piece == "p" || piece == "P") {
+            this.addPossibleMovesForPawn(i,j);
+        }
+    }
+
+    addPossibleMovesForPawn(i, j) {
+        if(i === 6) {
+            this.possible_moves[i-1][j] = 1;
+            this.possible_moves[i-2][j] = 1;
+        }
+        else {
+            this.possible_moves[i-1][j] = 1;
+        }
     }
 
     render() {
