@@ -123,9 +123,12 @@ class Game extends Component {
     }
 
     onDragEnd(event) {
+        let newX = Math.floor(this.data.getLocalPosition(this.parent).x/100);
+        let newY = Math.floor(this.data.getLocalPosition(this.parent).y/100);
+        this.x = newX*100+50;
+        this.y = newY*100+50;
         this.data = null;
         this.dragging = false;
-        const setPosition = this.data.getLocalPosition(this.parent);
     }
 
     onDragMove(event) {
