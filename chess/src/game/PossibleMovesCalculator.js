@@ -64,28 +64,35 @@ class PossibleMovesCalculator {
                         return element !== move;
                     });
                 }
+
                 // check if the move is not blocked by any piece (for any piece that is not a knight)
-                else {
-                    if(this.pieceName.toLowerCase() !== "n") {
+                if(this.pieceName.toLowerCase() !== "n") {
 
-                        let yIterator = Math.sign(move[0]);
-                        let xIterator = Math.sign(move[1]);
-                        let limit = Math.max(Math.abs(move[0]), Math.abs(move[1]));
+                    let yIterator = Math.sign(move[0]);
+                    let xIterator = Math.sign(move[1]);
+                    let currentX = x + xIterator;
+                    let currentY = y + yIterator;
+
+                    while(currentX !== xPosition || currentY !== yPosition) {
+                        console.log(currentX + ";" + currentY);
+                        if(board[currentY][currentX] !== "0") {
+                            // we remove
+                            console.log("removing because of obstacle on " + currentY + "," + currentX);
+                            filteredMoves = filteredMoves.filter(element => {
+                                return element !== move;
+                            })
+                        }
+                        else {
+                            //console.log("no obstacle in the position");
+                        }
+                        currentX += xIterator;
+                        currentY += yIterator;
                     }
-
                 }
-
-
 
             }
 
         }
-
-        console.log(filteredMoves.length);
-
-        filteredMoves.forEach(element => {
-            console.log(element);
-        });
 
         return filteredMoves;
     }
