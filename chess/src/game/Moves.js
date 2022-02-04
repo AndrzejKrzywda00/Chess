@@ -32,7 +32,9 @@ for(let i=0; i<7; i++) {
     bishopMoves.push(moveRightVector);
 }
 
+// possible knight move vectors
 let knightMoves = [
+    [0,0],
     [-2,-1],
     [-2,1],
     [-1,2],
@@ -44,22 +46,39 @@ let knightMoves = [
 ];
 
 let pawnMoves = [
+    [0,0],
     [-1,0],
     [-2,0],     // en passant
     [-1,1],     // takes
     [-1,-1]     // takes
 ];
 
+let queenMoves = [bishopMoves,rookMoves].flat(1);
+
+let kingMoves = [
+    [-1,-1],
+    [0,-1],
+    [1,-1],
+    [-1,0],
+    [0,0],
+    [1,0],
+    [-1,1],
+    [0,1],
+    [1,1],
+    [0,3],         // king side castling
+    [0,-4]         // queen side castling
+];
+
 // adding all moves to map
-moves.set("q",[bishopMoves,rookMoves]);
+moves.set("q",queenMoves);
 moves.set("b",bishopMoves);
 moves.set("r",rookMoves);
 moves.set("n",knightMoves);
 moves.set("p",pawnMoves);
-moves.set("k",[[-1,-1],[0,-1],[1,-1],[-1,0],[0,0],[1,0],[-1,1],[0,1],[1,1]]);
+moves.set("k",[]);
 
 // returns array of vectors of move
-function getMoves(piece) {
+function getMovesByPiece(piece) {
     return moves.get(piece.toLowerCase());
 }
 

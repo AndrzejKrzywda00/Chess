@@ -15,7 +15,8 @@ import B from "../img/white_bishop.png";
 import p from "../img/black_pawn.png";
 import P from "../img/white_pawn.png";
 import q from "../img/black_queen.png";
-import moves from "../game/pieces/Moves";
+import moves from "./Moves";
+import PossibleMovesCalculator from "./PossibleMovesCalculator";
 
 class Game extends Component {
 
@@ -39,6 +40,10 @@ class Game extends Component {
         this.size = {
             rows: 8,
             columns: 8
+        }
+        this.piece = {
+            sprite: null,
+            symbol: null
         }
     }
 
@@ -127,7 +132,7 @@ class Game extends Component {
     }
 
     /*
-    This method displays all pieces according to obtained FEN notatnion
+    This method displays all pieces according to obtained FEN notation
      */
     displayPieces(fen) {
 
@@ -205,14 +210,24 @@ class Game extends Component {
     }
 
     /*
-    This method claculates all possible moves for the clicked piece
+    This method calculates all possible moves for the clicked piece
      */
     onPieceClicked() {
 
         let x = Math.floor(Game.startingX/100);
         let y = Math.floor(Game.startingY/100);
-        let pieces = this.board.sprites;
-        
+
+        let pieceName = this.board.data[y][x];
+        let color = pieceName.toLowerCase() === pieceName ? "black" : "white";
+
+        this.piece.moves = new PossibleMovesCalculator(
+            this.possibleMoves,
+            pieceName,
+            color,
+            this.board.data,
+            {x: x, y: y},
+            "",
+            "");
     }
 
     onPieceRevoked() {
