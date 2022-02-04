@@ -2,7 +2,7 @@ const moves = new Map();
 
 let rookMoves = [];
 
-for(let i=0; i<7; i++) {
+for(let i=0; i<=7; i++) {
     let upV = [-i,0];
     rookMoves.push(upV);
 
@@ -18,7 +18,7 @@ for(let i=0; i<7; i++) {
 
 let bishopMoves = [];
 
-for(let i=0; i<7; i++) {
+for(let i=0; i<=7; i++) {
     let moveUpVector = [i,i];
     bishopMoves.push(moveUpVector);
 

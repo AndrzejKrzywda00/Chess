@@ -42,10 +42,9 @@ class PossibleMovesCalculator {
 
             // 1st checking if the move doesn't go over the board
             if(y + move[0] < 0 || y + move[0] > 7 || x + move[1] < 0 || x + move[1] > 7) {
-                console.log("filtering out in scenario of out of board");
-                filteredMoves.filter(element => {
+                filteredMoves = filteredMoves.filter(element => {
                     if(element !== move) {
-                        console.log("Element " + move + "will be removed");
+                        console.log("Element " + move + " will be removed because of over board");
                     }
                     return element !== move;
                 });
@@ -56,12 +55,12 @@ class PossibleMovesCalculator {
                 // filtering out the possibility to take your own piece
                 let yPosition = parseInt(y + move[0]);
                 let xPosition = parseInt(x + move[1]);
+                let playersPieces = piecesMoves.get(this.color);
 
-                if(board[yPosition][xPosition] !== "0" && piecesMoves.get(this.color).includes(board[yPosition][xPosition])) {
-                    console.log("filtering out in scenario of attack on friendly piece on " + yPosition + "," + xPosition);
-                    filteredMoves.filter(element => {
+                if(board[yPosition][xPosition] !== "0" && playersPieces.includes(board[yPosition][xPosition])) {
+                    filteredMoves = filteredMoves.filter(element => {
                         if(element !== move) {
-                            console.log("Element " + move + "will be removed");
+                            console.log("Element " + move + " will be removed");
                         }
                         return element !== move;
                     });
