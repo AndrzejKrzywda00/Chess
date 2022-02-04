@@ -31,7 +31,8 @@ class Game extends Component {
             castlingRights: null,
             en_passants: [],
             turn: 0,
-            data: []
+            data: [],
+            sprites: []
         };
         this.startingX = null;
         this.startingY = null;
@@ -137,6 +138,7 @@ class Game extends Component {
         let board = this.board.data;
 
         for(let i=0; i<rows; i++) {
+            let line = [];
             for(let j=0; j<columns; j++) {
                 try {
                     let texture = this.loader.resources[board[i][j]].texture;
@@ -147,21 +149,24 @@ class Game extends Component {
                     piece.anchor.set(0.5);
                     piece.setTransform(100*j+50,100*i+50,0.10,0.10);
                     this.application.stage.addChild(piece);
+                    line.push(piece);
                     piece
                         .on('pointerdown', this.onDragStart)
                         .on('pointerup', this.onDragEnd)
                         .on('pointerdown', this.onPieceClicked, this)
+                        .on('pointerup', this.onPieceRevoked, this)
                         .on('pointerupoutside', this.onDragEnd)
                         .on('pointermove', this.onDragMove);
                 } catch (exception) {
                 }
             }
+            this.board.sprites.push(line);
         }
     }
 
     onDragStart(event) {
-        this.startingX = this.x;
-        this.startingY = this.y;
+        Game.startingX = this.x;
+        Game.startingY = this.y;
         this.data = event.data;
         this.dragging = true;
     }
@@ -199,9 +204,19 @@ class Game extends Component {
         }
     }
 
+    /*
+    This method claculates all possible moves for the clicked piece
+     */
     onPieceClicked() {
-        console.log("Piece clicked");
-        console.log(this.board.data);
+
+        let x = Math.floor(Game.startingX/100);
+        let y = Math.floor(Game.startingY/100);
+        let pieces = this.board.sprites;
+        
+    }
+
+    onPieceRevoked() {
+
     }
 
     parseFen(fen) {
