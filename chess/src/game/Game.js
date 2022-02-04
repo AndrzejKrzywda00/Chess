@@ -22,7 +22,7 @@ class Game extends Component {
     constructor(props) {
         super(props);
         this.pixi_cnt = null;
-        this.app = new PIXI.Application({width: 800, height: 800, transparent: false});
+        this.app = new PIXI.Application({width: 800, height: 800, backgroundAlpha: 0.0});
         this.loader = null;
         this.dragging = false;
         this.data = null;
@@ -78,8 +78,9 @@ class Game extends Component {
     }
 
     initialize =()=> {
-        this.avatar = new PIXI.Sprite(this.loader.resources["pawnImage"].texture);
         this.displayBoard();
+        let startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk -";
+        this.displayPieces(startFen);
     }
 
     displayBoard() {
@@ -96,7 +97,6 @@ class Game extends Component {
                 this.app.stage.addChild(sprite);
             }
         }
-        this.displayPieces();
     }
 
     displayPositionNotation(i, j, sprite) {
@@ -125,10 +125,12 @@ class Game extends Component {
 
     }
 
-    displayPieces() {
+    /*
+    This method displays all pieces according to obtained FEN notatnion
+     */
+    displayPieces(fen) {
 
-        let startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk -";
-        this.parseFen(startingFen);
+        this.parseFen(fen);
 
         let rows = this.size.rows;
         let columns = this.size.columns;
@@ -144,12 +146,12 @@ class Game extends Component {
                     piece.roundPixels = false;
                     piece.anchor.set(0.5);
                     piece.setTransform(100*j+50,100*i+50,0.10,0.10);
-                    piece
-                        .on('pointerdown',this.onDragStart)
-                        .on('pointerup',this.onDragEnd)
-                        .on('pointerupoutside',this.onDragEnd)
-                        .on('pointermove',this.onDragMove);
                     this.app.stage.addChild(piece);
+                    piece
+                        .on('pointerdown', this.onDragStart)
+                        .on('pointerup', this.onDragEnd)
+                        .on('pointerupoutside', this.onDragEnd)
+                        .on('pointermove', this.onDragMove);
                 } catch (exception) {
                 }
             }
@@ -164,6 +166,8 @@ class Game extends Component {
     }
 
     onDragEnd() {
+
+        // here this is defined as the dragged object
 
         let newX = Math.floor(this.data.getLocalPosition(this.parent).x/100);
         let newY = Math.floor(this.data.getLocalPosition(this.parent).y/100);
@@ -266,6 +270,7 @@ class Game extends Component {
 
     // this function checks if the number is supported in fen
     isFENNumeric(number) {
+
         return number === "1"
             || number === "2"
             || number === "3"
