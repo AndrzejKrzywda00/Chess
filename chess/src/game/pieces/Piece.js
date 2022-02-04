@@ -1,12 +1,12 @@
 class Piece {
 
     constructor(color,
-                moveVector,
+                moveVectors,
                 castlingRights,
                 pieceName)
     {
         this.color = color;
-        this.moveVector = moveVector;
+        this.moveVector = moveVectors;
         this.pieceName = pieceName;
         this.castlingRights = castlingRights;
     }
@@ -16,7 +16,7 @@ class Piece {
      */
     calculatePossibleMoves(board, i, j) {
 
-        let possibleMoves = this.moveVector;
+        let possibleMoves = this.moveVector.get(this.pieceName.toLowerCase());
         let possiblePiecesToTake = this.calculatePossiblePiecesToTake();
         let output = possibleMoves;
 
@@ -32,6 +32,7 @@ class Piece {
             }
         }
 
+        // return possible vectors to apply
         return output;
     }
 
@@ -47,3 +48,5 @@ class Piece {
     }
 
 }
+
+export default Piece;

@@ -15,6 +15,7 @@ import B from "../img/white_bishop.png";
 import p from "../img/black_pawn.png";
 import P from "../img/white_pawn.png";
 import q from "../img/black_queen.png";
+import moves from "../game/pieces/Moves";
 
 class Game extends Component {
 
@@ -22,10 +23,10 @@ class Game extends Component {
         super(props);
         this.pixi_cnt = null;
         this.app = new PIXI.Application({width: 800, height: 800, transparent: false});
-        this.avatar = null;
         this.loader = null;
         this.dragging = false;
         this.data = null;
+        this.possibleMoves = moves;
         this.board = {
             castlingRights: null,
             en_passants: [],
@@ -34,11 +35,15 @@ class Game extends Component {
         };
         this.startingX = null;
         this.startingY = null;
+        this.size = {
+            rows: 8,
+            columns: 8
+        }
     }
 
     /*
     Functions that should be added
-    - remoing the pieces when taken - so need to have 2d array with Sprites saved to remove them
+    - removing the pieces when taken - so need to have 2d array with Sprites saved to remove them
     - storing array of pieces to make assessments if move can be done
     - also for check, stealmate, and mate options
      */
@@ -79,8 +84,8 @@ class Game extends Component {
 
     displayBoard() {
 
-        let columns = 8;
-        let rows = 8;
+        let columns = this.size.columns;
+        let rows = this.size.rows;
 
         for(let i=0; i<rows; i++) {
             for(let j=0; j<columns; j++) {
@@ -96,22 +101,24 @@ class Game extends Component {
 
     displayPositionNotation(i, j, sprite) {
 
+        let rows = this.size.rows;
+
         let columnText = ["8", "7", "6", "5", "4", "3", "2", "1"];
         let rowText = ["a","b","c","d","e","f","g","h"];
 
         let darkColorHex = "#668611";
         let lightColorHex = "#f4f6dc";
 
-        if(j === 7) {
+        if(j === rows-1) {
             let color = i%2 !== 0 ? darkColorHex : lightColorHex;
-            let text = new PIXI.Text(rowText[i],{fontWeight: "bold", fill: color});
-            text.setTransform(80,67);
+            let text = new PIXI.Text(rowText[i],{fontWeight: "bold", fill: color, fontSize: 18});
+            text.setTransform(82,72);
             sprite.addChild(text);
         }
 
         if(i === 0) {
             let color = j%2 === 0 ? darkColorHex : lightColorHex;
-            let text = new PIXI.Text(columnText[j],{fontWeight: "bold", fill: color});
+            let text = new PIXI.Text(columnText[j],{fontWeight: "bold", fill: color, fontSize: 18});
             text.setTransform(5,5);
             sprite.addChild(text);
         }
@@ -120,20 +127,11 @@ class Game extends Component {
 
     displayPieces() {
 
-        // black is lowercase
-        // white is uppercase
-        // next letter after last line of board is which player turn is it
-        // next symbol is castling possibilites
-        // - means neigher can castle
-        // Qk - white can queensize, black can kingsize
-        // max. option is KQkq
-        // next symbol is en-passant possibilities
         let startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk -";
-        //let alternateFen = "8/8/8/4p1K1/2k1P3/8/8/8 b - -";
         this.parseFen(startingFen);
 
-        let rows = 8;
-        let columns = 8;
+        let rows = this.size.rows;
+        let columns = this.size.columns;
         let board = this.board.data;
 
         for(let i=0; i<rows; i++) {
@@ -153,7 +151,6 @@ class Game extends Component {
                         .on('pointermove',this.onDragMove);
                     this.app.stage.addChild(piece);
                 } catch (exception) {
-                    continue;
                 }
             }
         }
@@ -166,9 +163,11 @@ class Game extends Component {
         this.dragging = true;
     }
 
-    onDragEnd(event) {
+    onDragEnd() {
+
         let newX = Math.floor(this.data.getLocalPosition(this.parent).x/100);
         let newY = Math.floor(this.data.getLocalPosition(this.parent).y/100);
+
         if(newX < 0) {
             newX = 0;
         }
@@ -181,13 +180,15 @@ class Game extends Component {
         if(newY < 0) {
             newY = 0;
         }
+
         this.x = newX*100+50;
         this.y = newY*100+50;
+
         this.data = null;
         this.dragging = false;
     }
 
-    onDragMove(event) {
+    onDragMove() {
         if(this.dragging) {
             const newPosition = this.data.getLocalPosition(this.parent);
             this.x = newPosition.x;
@@ -199,13 +200,11 @@ class Game extends Component {
 
         // saving data to simple board with fen representations
         let lines = fen.split("/");
-        let xBoard = 0;
-        let yBoard = 0;
 
         for(let i=0; i<lines.length; i++) {
             let boardLine = [];
 
-            if(i == 7) {
+            if(i === 7) {
 
                 let lastPart = lines[i].split(" ");
                 let lastLine = lastPart[0];
@@ -267,34 +266,14 @@ class Game extends Component {
 
     // this function checks if the number is supported in fen
     isFENNumeric(number) {
-        if(number === "1"
-        || number === "2"
-        || number === "3"
-        || number === "4"
-        || number === "5"
-        || number === "6"
-        || number === "7"
-        || number === "8")
-        return true;
-        else {
-            return false;
-        }
-    }
-
-    calculatePossibleMoves(piece, i, j) {
-        // this function shall calculate board with all possible moves
-        // 0 for free, 1 for taken
-        // obviously 1 stands for spaces taken with other pieces, including one which is dragged
-        // 1 for illegal moves, like king to king & moves outside the range of this piece
-        // 1 for moves that make a check to your king
-        // ---
-        // for king of course no check moves
-        // no castling afer move
-        // but king can be dragged over rook when has castling opportunity
-        // once again for en-passant attack on pawn, there should be information
-        if(piece == "p" || piece == "P") {
-            this.addPossibleMovesForPawn(i,j);
-        }
+        return number === "1"
+            || number === "2"
+            || number === "3"
+            || number === "4"
+            || number === "5"
+            || number === "6"
+            || number === "7"
+            || number === "8";
     }
 
     render() {
