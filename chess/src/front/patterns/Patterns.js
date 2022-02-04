@@ -100,6 +100,11 @@ const bmw = {
     light: "0xe1e0e2"
 };
 
+const classicFlat = {
+    dark: "0x769656",
+    light: "0xeeeed2"
+}
+
 patterns.set("classic", classic);
 patterns.set("andrzej", andrzej);
 patterns.set("deepSea", deepSea);
@@ -120,5 +125,6 @@ patterns.set("peach", peach);
 patterns.set("joker", joker);
 patterns.set("harnasIceTea", harnasIceTea);
 patterns.set("bwm", bmw);
+patterns.set("classicFlat", classicFlat);
 
 export default patterns;
