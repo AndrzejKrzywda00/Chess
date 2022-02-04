@@ -14,6 +14,7 @@ class PossibleMovesCalculator {
         this.enPassant = enPassantPossibilities;
         this.position = position;
         this.color = color;
+        this.pieceName = pieceName;
 
         this.filteredMoves = this.calculate();
     }
@@ -63,6 +64,19 @@ class PossibleMovesCalculator {
                         return element !== move;
                     });
                 }
+                // check if the move is not blocked by any piece (for any piece that is not a knight)
+                else {
+                    if(this.pieceName.toLowerCase() !== "n") {
+
+                        let yIterator = Math.sign(move[0]);
+                        let xIterator = Math.sign(move[1]);
+                        let limit = Math.max(Math.abs(move[0]), Math.abs(move[1]));
+                    }
+
+                }
+
+
+
             }
 
         }

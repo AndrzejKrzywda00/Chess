@@ -16,6 +16,7 @@ import P from "../img/white_pawn.png";
 import q from "../img/black_queen.png";
 import moves from "./Moves";
 import PossibleMovesCalculator from "./PossibleMovesCalculator";
+import pieceMove from "../sounds/pieceMove.mp3";
 
 class Game extends Component {
 
@@ -223,6 +224,9 @@ class Game extends Component {
             let pieceSymbol = Game.boardSimplified[oldY][oldX];
             Game.boardSimplified[oldY][oldX] = "0";
             Game.boardSimplified[newY][newX] = pieceSymbol;
+
+            let audio = new Audio(pieceMove);
+            audio.play().catch();
 
             console.log(Game.boardSimplified);
         }
