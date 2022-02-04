@@ -1,8 +1,7 @@
 import {Component} from "react";
 import * as PIXI from "pixi.js";
-import pawnImage from "../img/chesspawn.png";
-import darkSquare from "../img/darkSquare.png";
-import lightSquare from "../img/whiteSquare.png";
+import darkSquare from "../img/blackGradient.png";
+import lightSquare from "../img/whiteGradient.png";
 import K from "../img/white_king.png";
 import k from "../img/black_king.png";
 import Q from "../img/white_queen.png";
@@ -47,6 +46,7 @@ class Game extends Component {
             moves: null
         };
         this.pieceMoves = null;
+        this.boardSimplified = null;
         this.pattern = props.boardPattern;
     }
 
@@ -68,7 +68,6 @@ class Game extends Component {
     setup =()=> {
         this.loader = new PIXI.Loader();
         this.loader
-            .add("pawnImage",pawnImage)
             .add("lightSquare",lightSquare)
             .add("darkSquare",darkSquare)
             .add("K",K)
@@ -218,13 +217,14 @@ class Game extends Component {
             this.y = newY*100+50;
 
             // updating the board object
-            let oldX = Math.floor(this.startingX/100);
-            let oldY = Math.floor(this.startingY/100);
-            let pieceSymbol = Game.board.data[oldY][oldX];
-            Game.board.data[oldY][oldX] = "0";
-            Game.board.data[newY][newX] = pieceSymbol;
+            let oldX = Math.floor(Game.startingX/100);
+            let oldY = Math.floor(Game.startingY/100);
+            console.log(oldY + ";" + oldX);
+            let pieceSymbol = Game.boardSimplified[oldY][oldX];
+            Game.boardSimplified[oldY][oldX] = "0";
+            Game.boardSimplified[newY][newX] = pieceSymbol;
 
-            console.log(Game.board.data);
+            console.log(Game.boardSimplified);
         }
         else {
             this.x = Game.startingX;
@@ -263,10 +263,12 @@ class Game extends Component {
             "",
             "")
             .filteredMoves;
+
+        Game.boardSimplified = this.board.data;
     }
 
     onPieceRevoked() {
-
+        this.board.data = Game.boardSimplified;
     }
 
     parseFen(fen) {
