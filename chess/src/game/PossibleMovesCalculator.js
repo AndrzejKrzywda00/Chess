@@ -76,14 +76,10 @@ class PossibleMovesCalculator {
                     while(currentX !== xPosition || currentY !== yPosition) {
                         console.log(currentX + ";" + currentY);
                         if(board[currentY][currentX] !== "0") {
-                            // we remove
-                            console.log("removing because of obstacle on " + currentY + "," + currentX);
+
                             filteredMoves = filteredMoves.filter(element => {
                                 return element !== move;
                             })
-                        }
-                        else {
-                            //console.log("no obstacle in the position");
                         }
                         currentX += xIterator;
                         currentY += yIterator;

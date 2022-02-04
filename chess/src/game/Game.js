@@ -49,6 +49,7 @@ class Game extends Component {
         this.pieceMoves = null;
         this.boardSimplified = null;
         this.pattern = props.boardPattern;
+        this.choosePattern = props.chooseGradientOverPattern;
     }
 
     /*
@@ -99,36 +100,43 @@ class Game extends Component {
 
         for(let i=0; i<rows; i++) {
             for(let j=0; j<columns; j++) {
-                let texture = this.loader.resources[(i+j) % 2 === 0 ? "lightSquare":"darkSquare"].texture;
-                let sprite = new PIXI.Sprite(texture);
-                this.displayPositionNotation(i,j,sprite);
-                sprite.setTransform(i*100,j*100);
-                this.application.stage.addChild(sprite);
+                if(!this.choosePattern) {
+                    let graphics = new PIXI.Graphics();
+                    if((i+j)%2 === 0) {
+                        graphics.beginFill(this.pattern.dark);
+                    }
+                    else {
+                        graphics.beginFill(this.pattern.light);
+                    }
+                    graphics.drawRect(100*i,100*j,100,100);
+                    this.displayPositionNotation(i,j,graphics, this.pattern.dark, this.pattern.light);
+                    this.application.stage.addChild(graphics);
+                }
             }
         }
     }
 
-    displayPositionNotation(i, j, sprite) {
+    displayPositionNotation(i, j, sprite, darkColor, lightColor) {
 
         let rows = this.size.rows;
 
         let columnText = ["8", "7", "6", "5", "4", "3", "2", "1"];
         let rowText = ["a","b","c","d","e","f","g","h"];
 
-        let darkColorHex = "#668611";
-        let lightColorHex = "#f4f6dc";
+        let darkColorHex = darkColor;
+        let lightColorHex = lightColor;
 
-        if(j === rows-1) {
-            let color = i%2 !== 0 ? darkColorHex : lightColorHex;
-            let text = new PIXI.Text(rowText[i],{fontWeight: "bold", fill: color, fontSize: 18});
-            text.setTransform(82,72);
+        if(i === rows-1) {
+            let color = j%2 !== 0 ? lightColorHex : darkColorHex;
+            let text = new PIXI.Text(rowText[j],{fontWeight: "bold", fill: color, fontSize: 18});
+            text.setTransform(100*j+84,100*i+75);
             sprite.addChild(text);
         }
 
-        if(i === 0) {
-            let color = j%2 === 0 ? darkColorHex : lightColorHex;
-            let text = new PIXI.Text(columnText[j],{fontWeight: "bold", fill: color, fontSize: 18});
-            text.setTransform(5,5);
+        if(j === 0) {
+            let color = i%2 === 0 ? lightColorHex : darkColorHex;
+            let text = new PIXI.Text(columnText[i],{fontWeight: "bold", fill: color, fontSize: 18});
+            text.setTransform(100*j+5,100*i+5);
             sprite.addChild(text);
         }
 
