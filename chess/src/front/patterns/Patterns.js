@@ -60,7 +60,40 @@ const twitch = {
     light: "#f0f0f0"
 };
 
+const tournament = {
+    dark: "#1e4129",
+    light: "#e8e8e8"
+};
 
+const cobi = {
+    dark: "#5a4533",
+    light: "#cec4a6"
+};
+
+const messenger = {
+    dark: "#006eff",
+    light: "#d5389a"
+};
+
+const grey = {
+    dark: "#6f6f67",
+    light: "#c4c4c4"
+};
+
+const peach = {
+    dark: "#b7700d",
+    light: "#f4c685"
+};
+
+const joker = {
+    dark: "#d83e9d",
+    light: "#5ac6a4"
+};
+
+const harnasIceTea = {
+    dark: "",
+    light: ""
+}
 
 patterns.set("classic", classic);
 patterns.set("andrzej", andrzej);
@@ -74,5 +107,12 @@ patterns.set("minecraft", minecraft);
 patterns.set("vatican", vatican);
 patterns.set("bloodyMarry", bloodyMarry);
 patterns.set("twitch", twitch);
+patterns.set("tournament", tournament);
+patterns.set("cobi", cobi);
+patterns.set("messenger", messenger);
+patterns.set("grey", grey);
+patterns.set("peach", peach);
+patterns.set("joker", joker);
+patterns.set("harnasIceTea", harnasIceTea);
 
 export default patterns;

@@ -43,8 +43,9 @@ class Game extends Component {
         }
         this.piece = {
             sprite: null,
-            symbol: null
-        }
+            symbol: null,
+            moves: null
+        };
         this.pattern = props.boardPattern;
     }
 
@@ -194,6 +195,14 @@ class Game extends Component {
         if(newY < 0) {
             newY = 0;
         }
+
+        let offset = {
+            x: newX - Math.floor(Game.startingX/100),
+            y: newY - Math.floor(Game.startingY/100)
+        };
+
+        let possibleMoves = Game.size;
+        console.log(possibleMoves);
 
         this.x = newX*100+50;
         this.y = newY*100+50;

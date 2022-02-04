@@ -73,7 +73,6 @@ class PossibleMovesCalculator {
             console.log(element);
         });
 
-
         return filteredMoves;
     }
 
