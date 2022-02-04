@@ -93,7 +93,12 @@ const joker = {
 const harnasIceTea = {
     dark: "",
     light: ""
-}
+};
+
+const bwm = {
+    dark: "#1a2043",
+    light: "#e1e0e2"
+};
 
 patterns.set("classic", classic);
 patterns.set("andrzej", andrzej);
@@ -114,5 +119,7 @@ patterns.set("grey", grey);
 patterns.set("peach", peach);
 patterns.set("joker", joker);
 patterns.set("harnasIceTea", harnasIceTea);
+patterns.set("bwm", bwm);
+
 
 export default patterns;

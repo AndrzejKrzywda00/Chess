@@ -46,6 +46,7 @@ class Game extends Component {
             symbol: null,
             moves: null
         };
+        this.pieceMoves = null;
         this.pattern = props.boardPattern;
     }
 
@@ -196,16 +197,28 @@ class Game extends Component {
             newY = 0;
         }
 
-        let offset = {
-            x: newX - Math.floor(Game.startingX/100),
-            y: newY - Math.floor(Game.startingY/100)
-        };
+        let offset = [
+            newY - Math.floor(Game.startingY/100),
+            newX - Math.floor(Game.startingX/100)
+        ];
 
-        let possibleMoves = Game.size;
-        console.log(possibleMoves);
+        let possibleMoves = Game.pieceMoves;
+        let moveValid = false;
 
-        this.x = newX*100+50;
-        this.y = newY*100+50;
+        possibleMoves.forEach(element => {
+            if(element[0] === offset[0] && element[1] === offset[1]) {
+                moveValid = true;
+            }
+        });
+
+        if(moveValid) {
+            this.x = newX*100+50;
+            this.y = newY*100+50;
+        }
+        else {
+            this.x = Game.startingX;
+            this.y = Game.startingY;
+        }
 
         this.data = null;
         this.dragging = false;
@@ -230,14 +243,15 @@ class Game extends Component {
         let pieceName = this.board.data[y][x];
         let color = pieceName.toLowerCase() === pieceName ? "black" : "white";
 
-        this.piece.moves = new PossibleMovesCalculator(
+        Game.pieceMoves = new PossibleMovesCalculator(
             this.possibleMoves,
             pieceName,
             color,
             this.board.data,
             {x: x, y: y},
             "",
-            "");
+            "")
+            .filteredMoves;
     }
 
     onPieceRevoked() {
