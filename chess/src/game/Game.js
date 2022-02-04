@@ -52,12 +52,12 @@ class Game extends Component {
     Functions that should be added
     - removing the pieces when taken - so need to have 2d array with Sprites saved to remove them
     - storing array of pieces to make assessments if move can be done
-    - also for check, stealmate, and mate options
+    - also for check, stalemate, and mate options
      */
 
     updatePixiCnt =(element)=> {
         this.pixi_cnt = element;
-        if(this.pixi_cnt && this.pixi_cnt.children.length <=0 ) {
+        if(this.pixi_cnt && this.pixi_cnt.children.length <= 0) {
             this.pixi_cnt.appendChild(this.application.view);
         }
         this.setup();

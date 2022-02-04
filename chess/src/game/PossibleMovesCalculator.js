@@ -23,6 +23,15 @@ class PossibleMovesCalculator {
         let x = this.position.x;
         let y = this.position.y;
         let board = this.board;
+
+        // reversing the y coordinates for the position
+        if(this.color === "black") {
+            this.moves.forEach(element => {
+                element[0] = -1 * element[0];
+                element[1] = -1 * element[1];
+            });
+        }
+
         let filteredMoves = Array.from(this.moves);
 
         let blackPieces = ["r","n","b","q","k","p"];
@@ -31,11 +40,6 @@ class PossibleMovesCalculator {
         piecesMoves.set("black", blackPieces);
         piecesMoves.set("white", whitePieces);
 
-        // reversing the y coordinates for the position
-        if(this.color === "black") {
-
-        }
-
         for(let i=0; i<this.moves.length; i++) {
 
             let move = this.moves[i];
@@ -43,9 +47,6 @@ class PossibleMovesCalculator {
             // 1st checking if the move doesn't go over the board
             if(y + move[0] < 0 || y + move[0] > 7 || x + move[1] < 0 || x + move[1] > 7) {
                 filteredMoves = filteredMoves.filter(element => {
-                    if(element !== move) {
-                        console.log("Element " + move + " will be removed because of over board");
-                    }
                     return element !== move;
                 });
             }
@@ -59,9 +60,6 @@ class PossibleMovesCalculator {
 
                 if(board[yPosition][xPosition] !== "0" && playersPieces.includes(board[yPosition][xPosition])) {
                     filteredMoves = filteredMoves.filter(element => {
-                        if(element !== move) {
-                            console.log("Element " + move + " will be removed");
-                        }
                         return element !== move;
                     });
                 }
