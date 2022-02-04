@@ -17,6 +17,7 @@ import P from "../img/white_pawn.png";
 import q from "../img/black_queen.png";
 import moves from "./Moves";
 import PossibleMovesCalculator from "./PossibleMovesCalculator";
+import {Rectangle} from "pixi.js/dist/browser/pixi.mjs";
 
 class Game extends Component {
 
@@ -45,6 +46,7 @@ class Game extends Component {
             sprite: null,
             symbol: null
         }
+        this.pattern = props.boardPattern;
     }
 
     /*

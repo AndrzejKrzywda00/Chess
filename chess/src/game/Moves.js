@@ -75,11 +75,6 @@ moves.set("b",bishopMoves);
 moves.set("r",rookMoves);
 moves.set("n",knightMoves);
 moves.set("p",pawnMoves);
-moves.set("k",[]);
-
-// returns array of vectors of move
-function getMovesByPiece(piece) {
-    return moves.get(piece.toLowerCase());
-}
+moves.set("k",kingMoves);
 
 export default moves;

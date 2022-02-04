@@ -44,7 +44,9 @@ class PossibleMovesCalculator {
             if(y + move[0] < 0 || y + move[0] > 7 || x + move[1] < 0 || x + move[1] > 7) {
                 console.log("filtering out in scenario of out of board");
                 filteredMoves.filter(element => {
-                    console.log("returning " + element !== move);
+                    if(element !== move) {
+                        console.log("Element " + move + "will be removed");
+                    }
                     return element !== move;
                 });
             }
@@ -58,7 +60,9 @@ class PossibleMovesCalculator {
                 if(board[yPosition][xPosition] !== "0" && piecesMoves.get(this.color).includes(board[yPosition][xPosition])) {
                     console.log("filtering out in scenario of attack on friendly piece on " + yPosition + "," + xPosition);
                     filteredMoves.filter(element => {
-                        console.log("returning " + element !== move);
+                        if(element !== move) {
+                            console.log("Element " + move + "will be removed");
+                        }
                         return element !== move;
                     });
                 }
@@ -70,7 +74,8 @@ class PossibleMovesCalculator {
 
         filteredMoves.forEach(element => {
             console.log(element);
-        })
+        });
+
 
         return filteredMoves;
     }
