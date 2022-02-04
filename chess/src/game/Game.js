@@ -212,8 +212,19 @@ class Game extends Component {
         });
 
         if(moveValid) {
+
+            // updating the coordinates of the sprite
             this.x = newX*100+50;
             this.y = newY*100+50;
+
+            // updating the board object
+            let oldX = Math.floor(this.startingX/100);
+            let oldY = Math.floor(this.startingY/100);
+            let pieceSymbol = Game.board.data[oldY][oldX];
+            Game.board.data[oldY][oldX] = "0";
+            Game.board.data[newY][newX] = pieceSymbol;
+
+            console.log(Game.board.data);
         }
         else {
             this.x = Game.startingX;
