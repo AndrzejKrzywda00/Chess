@@ -22,7 +22,7 @@ class Game extends Component {
     constructor(props) {
         super(props);
         this.pixi_cnt = null;
-        this.app = new PIXI.Application({width: 800, height: 800, backgroundAlpha: 0.0});
+        this.application = new PIXI.Application({width: 800, height: 800, backgroundAlpha: 0.0});
         this.loader = null;
         this.dragging = false;
         this.data = null;
@@ -51,7 +51,7 @@ class Game extends Component {
     updatePixiCnt =(element)=> {
         this.pixi_cnt = element;
         if(this.pixi_cnt && this.pixi_cnt.children.length <=0 ) {
-            this.pixi_cnt.appendChild(this.app.view);
+            this.pixi_cnt.appendChild(this.application.view);
         }
         this.setup();
     }
@@ -94,7 +94,7 @@ class Game extends Component {
                 let sprite = new PIXI.Sprite(texture);
                 this.displayPositionNotation(i,j,sprite);
                 sprite.setTransform(i*100,j*100);
-                this.app.stage.addChild(sprite);
+                this.application.stage.addChild(sprite);
             }
         }
     }
@@ -146,10 +146,11 @@ class Game extends Component {
                     piece.roundPixels = false;
                     piece.anchor.set(0.5);
                     piece.setTransform(100*j+50,100*i+50,0.10,0.10);
-                    this.app.stage.addChild(piece);
+                    this.application.stage.addChild(piece);
                     piece
                         .on('pointerdown', this.onDragStart)
                         .on('pointerup', this.onDragEnd)
+                        .on('pointerdown', this.onPieceClicked, this)
                         .on('pointerupoutside', this.onDragEnd)
                         .on('pointermove', this.onDragMove);
                 } catch (exception) {
@@ -166,8 +167,6 @@ class Game extends Component {
     }
 
     onDragEnd() {
-
-        // here this is defined as the dragged object
 
         let newX = Math.floor(this.data.getLocalPosition(this.parent).x/100);
         let newY = Math.floor(this.data.getLocalPosition(this.parent).y/100);
@@ -198,6 +197,11 @@ class Game extends Component {
             this.x = newPosition.x;
             this.y = newPosition.y;
         }
+    }
+
+    onPieceClicked() {
+        console.log("Piece clicked");
+        console.log(this.board.data);
     }
 
     parseFen(fen) {
