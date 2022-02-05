@@ -48,6 +48,10 @@ class Game extends Component {
         };
         this.pieceMoves = null;
         this.boardSimplified = null;
+        this.sprites = [];
+        this.lastX = null;
+        this.lastY = null;
+        this.moveValid = false;
         this.pattern = props.boardPattern;
         this.choosePattern = props.chooseGradientOverPattern;
     }
@@ -178,7 +182,7 @@ class Game extends Component {
                 } catch (exception) {
                 }
             }
-            this.board.sprites.push(line);
+            this.sprites.push(line);
         }
     }
 
@@ -224,6 +228,9 @@ class Game extends Component {
 
         if(moveValid) {
 
+            // inform finisher that can take piece
+            Game.moveValid = true;
+
             // updating the coordinates of the sprite
             this.x = newX*100+50;
             this.y = newY*100+50;
@@ -233,11 +240,17 @@ class Game extends Component {
             let oldY = Math.floor(Game.startingY/100);
             let pieceSymbol = Game.boardSimplified[oldY][oldX];
 
+            // setting up new position in the virtual board
             Game.boardSimplified[oldY][oldX] = "0";
             Game.boardSimplified[newY][newX] = pieceSymbol;
 
+            // playing the sound of the move
             let audio = new Audio(pieceMove);
             audio.play().catch();
+
+            // saving the last position
+            Game.lastX = newX;
+            Game.lastY = newY;
         }
         else {
             this.x = Game.startingX;
@@ -279,10 +292,30 @@ class Game extends Component {
             .filteredMoves;
 
         Game.boardSimplified = this.board.data;
+        Game.sprites = this.sprites;
     }
 
     onPieceRevoked() {
+
+        if(Game.moveValid) {
+            let newY = Game.lastY;
+            let newX = Game.lastX;
+
+            let oldY = Math.floor(Game.startingY/100);
+            let oldX = Math.floor(Game.startingX/100);
+
+            this.application.stage.removeChild(this.sprites[newY][newX]);
+
+            // removing the chosen sprite from the board
+            Game.sprites[newY][newX] = Game.sprites[oldY][oldX];
+            Game.sprites[oldY][oldX] = undefined;
+        }
+
         this.board.data = Game.boardSimplified;
+        this.sprites = Game.sprites;
+        this.lastX = Game.lastX;
+        this.lastY = Game.lastY;
+        Game.moveValid = false;
     }
 
     parseFen(fen) {
