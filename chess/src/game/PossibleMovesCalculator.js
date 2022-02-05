@@ -85,9 +85,39 @@ class PossibleMovesCalculator {
                     }
                 }
 
+                // filter out not permitted moves for a pawn
+                if(this.pieceName.toLowerCase() === "p") {
+
+                    // first en-passant
+                    if(y !== 6) {
+                        filteredMoves = filteredMoves.filter(move => {
+                            return move[0] !== -2;
+                        });
+                    }
+
+                    // second removing taking the piece move, when there is no opponent
+                    let oppositeColor = this.color === "white" ? "black" : "white";
+                    let opponentPieces = piecesMoves.get(oppositeColor);
+
+                    if(move[0] === -1 && move[1] === -1) {
+                        console.log("checking the taking possibility");
+                        if(!opponentPieces.includes(board[y-1][x-1])) {
+                            console.log("removing a move to" + y-1 + "," + x-1);
+                            filteredMoves.filter(activeMove => {
+                                return activeMove !== move;
+                            });
+                        }
+                    }
+
+
+
+                }
+
             }
 
         }
+
+        console.log(filteredMoves);
 
         return filteredMoves;
     }

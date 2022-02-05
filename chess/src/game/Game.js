@@ -2,18 +2,18 @@ import {Component} from "react";
 import * as PIXI from "pixi.js";
 import darkSquare from "../img/blackGradient.png";
 import lightSquare from "../img/whiteGradient.png";
-import K from "../img/white_king.png";
-import k from "../img/black_king.png";
-import Q from "../img/white_queen.png";
-import r from "../img/black_rook.png";
-import R from "../img/white_rook.png";
-import n from "../img/black_knight.png";
-import N from "../img/white_knight.png";
-import b from "../img/black_bishop.png";
-import B from "../img/white_bishop.png";
-import p from "../img/black_pawn.png";
-import P from "../img/white_pawn.png";
-import q from "../img/black_queen.png";
+import K from "../img/white_king_2.png";
+import k from "../img/black_king_2.png";
+import Q from "../img/white_queen_2.png";
+import r from "../img/black_rook_2.png";
+import R from "../img/white_rook_2.png";
+import n from "../img/black_knight_2.png";
+import N from "../img/white_knight_2.png";
+import b from "../img/black_bishop_2.png";
+import B from "../img/white_bishop_2.png";
+import p from "../img/black_pawn_2.png";
+import P from "../img/white_pawn_2.png";
+import q from "../img/black_queen_2.png";
 import moves from "./Moves";
 import PossibleMovesCalculator from "./PossibleMovesCalculator";
 import pieceMove from "../sounds/pieceMove.mp3";
@@ -169,7 +169,7 @@ class Game extends Component {
                     piece.buttonMode = true;
                     piece.roundPixels = false;
                     piece.anchor.set(0.5);
-                    piece.setTransform(100*j+50,100*i+50,0.10,0.10);
+                    piece.setTransform(100*j+50,100*i+50,0.40,0.40);
                     this.application.stage.addChild(piece);
                     line.push(piece);
                     piece
@@ -195,6 +195,8 @@ class Game extends Component {
     }
 
     onDragEnd() {
+
+        console.log(this);
 
         let newX = Math.floor(this.data.getLocalPosition(this.parent).x/100);
         let newY = Math.floor(this.data.getLocalPosition(this.parent).y/100);
@@ -258,8 +260,8 @@ class Game extends Component {
         }
 
         this.zIndex = 65;
-        this.data = null;
         this.dragging = false;
+        this.data = null;
     }
 
     onDragMove() {
