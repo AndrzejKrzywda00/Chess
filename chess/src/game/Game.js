@@ -121,6 +121,10 @@ class Game extends Component {
 
     }
 
+    /*
+    This internal method places letters and numbers on selected edge tiles
+    to make reading the board easier for players
+     */
     displayPositionNotation(i, j, sprite, darkColor, lightColor) {
 
         let rows = this.size.rows;

@@ -1,3 +1,5 @@
+import {act} from "@testing-library/react";
+
 class PossibleMovesCalculator {
 
     constructor(allMoves,
@@ -78,7 +80,7 @@ class PossibleMovesCalculator {
 
                             filteredMoves = filteredMoves.filter(element => {
                                 return element !== move;
-                            })
+                            });
                         }
                         currentX += xIterator;
                         currentY += yIterator;
@@ -100,16 +102,39 @@ class PossibleMovesCalculator {
                     let opponentPieces = piecesMoves.get(oppositeColor);
 
                     if(move[0] === -1 && move[1] === -1) {
-                        console.log("checking the taking possibility");
                         if(!opponentPieces.includes(board[y-1][x-1])) {
-                            console.log("removing a move to" + y-1 + "," + x-1);
-                            filteredMoves.filter(activeMove => {
+                            console.log((y-1) + "," + (x-1));
+                            filteredMoves = filteredMoves.filter(activeMove => {
                                 return activeMove !== move;
                             });
                         }
                     }
 
+                    if(move[0] === -1 && move[1] === 1) {
+                        if(!opponentPieces.includes(board[y-1][x+1])) {
+                            console.log((y-1) + "," + (x-1));
+                            filteredMoves = filteredMoves.filter(activeMove => {
+                                return activeMove !== move;
+                            });
+                        }
+                    }
 
+                    if(move[1] === 0) {
+                        if(move[0] === -1 && y-1 >= 0) {
+                            if(board[y-1][x] !== "0") {
+                                filteredMoves = filteredMoves.filter(activeMove => {
+                                   return activeMove !== move;
+                                });
+                            }
+                        }
+                        if(move[0] === -2 && y-2 >= 0) {
+                            if(board[y-2][x] !== "0") {
+                                filteredMoves = filteredMoves.filter(activeMove => {
+                                    return activeMove !== move;
+                                })
+                            }
+                        }
+                    }
 
                 }
 
