@@ -133,14 +133,14 @@ class Game extends Component {
 
         if(i === rows-1) {
             let color = j%2 !== 0 ? lightColorHex : darkColorHex;
-            let text = new PIXI.Text(rowText[j],{fontWeight: "bold", fill: color, fontSize: 18});
+            let text = new PIXI.Text(rowText[j],{fill: color, fontSize: 18});
             text.setTransform(100*j+84,100*i+75);
             sprite.addChild(text);
         }
 
         if(j === 0) {
             let color = i%2 === 0 ? lightColorHex : darkColorHex;
-            let text = new PIXI.Text(columnText[i],{fontWeight: "bold", fill: color, fontSize: 18});
+            let text = new PIXI.Text(columnText[i],{fill: color, fontSize: 18});
             text.setTransform(100*j+5,100*i+5);
             sprite.addChild(text);
         }
