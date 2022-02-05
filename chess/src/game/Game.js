@@ -171,7 +171,8 @@ class Game extends Component {
                     let texture = this.loader.resources[board[i][j]].texture;
                     let piece = new PIXI.Sprite(texture);
                     piece.interactive = true;
-                    piece.buttonMode = true;
+                    //piece.buttonMode = true;
+                    piece.cursor = "grab";
                     piece.roundPixels = false;
                     piece.anchor.set(0.5);
                     piece.setTransform(100*j+50,100*i+50,0.40,0.40);
@@ -192,6 +193,7 @@ class Game extends Component {
     }
 
     onDragStart(event) {
+        this.cursor = "grabbing";
         Game.startingX = this.x;
         Game.startingY = this.y;
         this.data = event.data;
@@ -201,7 +203,7 @@ class Game extends Component {
 
     onDragEnd() {
 
-        console.log(this);
+        this.cursor = "grab";
 
         try {
             let newX = Math.floor(this.data.getLocalPosition(this.parent).x/100);

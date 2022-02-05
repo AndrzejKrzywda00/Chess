@@ -139,6 +139,11 @@ class PossibleMovesCalculator {
 
                 }
 
+                // remove all moves that can cause a check
+                if(this.pieceName.toLowerCase() === "k") {
+
+                }
+
             }
 
         }

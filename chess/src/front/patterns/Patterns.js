@@ -136,7 +136,7 @@ patterns.set("andrut", andrut);
 // helper function to parse hex with # symbol to '0x' version
 function parseHexTo0x(patterns) {
 
-    patterns.forEach((value, key) => {
+    patterns.forEach((value) => {
 
         let darkLen = value.dark.length;
         value.dark = "0x" + value.dark.substring(1,darkLen);
