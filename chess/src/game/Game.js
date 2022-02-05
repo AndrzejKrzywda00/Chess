@@ -17,6 +17,7 @@ import q from "../img/black_queen_2.png";
 import moves from "./Moves";
 import PossibleMovesCalculator from "./PossibleMovesCalculator";
 import pieceMove from "../sounds/pieceMove.mp3";
+import "./Game.css";
 
 class Game extends Component {
 
@@ -202,66 +203,68 @@ class Game extends Component {
 
         console.log(this);
 
-        let newX = Math.floor(this.data.getLocalPosition(this.parent).x/100);
-        let newY = Math.floor(this.data.getLocalPosition(this.parent).y/100);
+        try {
+            let newX = Math.floor(this.data.getLocalPosition(this.parent).x/100);
+            let newY = Math.floor(this.data.getLocalPosition(this.parent).y/100);
 
-        if(newX < 0) {
-            newX = 0;
-        }
-        if(newX > 7) {
-            newX = 7;
-        }
-        if(newY > 7) {
-            newY = 7;
-        }
-        if(newY < 0) {
-            newY = 0;
-        }
-
-        let offset = [
-            newY - Math.floor(Game.startingY/100),
-            newX - Math.floor(Game.startingX/100)
-        ];
-
-        let possibleMoves = Game.pieceMoves;
-        let moveValid = false;
-
-        possibleMoves.forEach(element => {
-            if(element[0] === offset[0] && element[1] === offset[1]) {
-                moveValid = true;
+            if(newX < 0) {
+                newX = 0;
             }
-        });
+            if(newX > 7) {
+                newX = 7;
+            }
+            if(newY > 7) {
+                newY = 7;
+            }
+            if(newY < 0) {
+                newY = 0;
+            }
 
-        if(moveValid) {
+            let offset = [
+                newY - Math.floor(Game.startingY/100),
+                newX - Math.floor(Game.startingX/100)
+            ];
 
-            // inform finisher that can take piece
-            Game.moveValid = true;
+            let possibleMoves = Game.pieceMoves;
+            let moveValid = false;
 
-            // updating the coordinates of the sprite
-            this.x = newX*100+50;
-            this.y = newY*100+50;
+            possibleMoves.forEach(element => {
+                if(element[0] === offset[0] && element[1] === offset[1]) {
+                    moveValid = true;
+                }
+            });
 
-            // updating the board object
-            let oldX = Math.floor(Game.startingX/100);
-            let oldY = Math.floor(Game.startingY/100);
-            let pieceSymbol = Game.boardSimplified[oldY][oldX];
+            if(moveValid) {
 
-            // setting up new position in the virtual board
-            Game.boardSimplified[oldY][oldX] = "0";
-            Game.boardSimplified[newY][newX] = pieceSymbol;
+                // inform finisher that can take piece
+                Game.moveValid = true;
 
-            // playing the sound of the move
-            let audio = new Audio(pieceMove);
-            audio.play().catch();
+                // updating the coordinates of the sprite
+                this.x = newX*100+50;
+                this.y = newY*100+50;
 
-            // saving the last position
-            Game.lastX = newX;
-            Game.lastY = newY;
-        }
-        else {
-            this.x = Game.startingX;
-            this.y = Game.startingY;
-        }
+                // updating the board object
+                let oldX = Math.floor(Game.startingX/100);
+                let oldY = Math.floor(Game.startingY/100);
+                let pieceSymbol = Game.boardSimplified[oldY][oldX];
+
+                // setting up new position in the virtual board
+                Game.boardSimplified[oldY][oldX] = "0";
+                Game.boardSimplified[newY][newX] = pieceSymbol;
+
+                // playing the sound of the move
+                let audio = new Audio(pieceMove);
+                audio.play().catch();
+
+                // saving the last position
+                Game.lastX = newX;
+                Game.lastY = newY;
+            }
+            else {
+                this.x = Game.startingX;
+                this.y = Game.startingY;
+            }
+        } catch(exception) {}
 
         this.zIndex = 65;
         this.dragging = false;
@@ -322,6 +325,9 @@ class Game extends Component {
         this.lastX = Game.lastX;
         this.lastY = Game.lastY;
         Game.moveValid = false;
+
+        console.log(this.sprites);
+        console.log(this.board.data);
     }
 
     parseFen(fen) {

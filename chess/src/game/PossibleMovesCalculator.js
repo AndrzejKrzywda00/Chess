@@ -43,6 +43,8 @@ class PossibleMovesCalculator {
         piecesMoves.set("black", blackPieces);
         piecesMoves.set("white", whitePieces);
 
+        // TODO -- optimize this to make less operations, and be quicker
+
         for(let i=0; i<this.moves.length; i++) {
 
             let move = this.moves[i];
@@ -103,7 +105,6 @@ class PossibleMovesCalculator {
 
                     if(move[0] === -1 && move[1] === -1) {
                         if(!opponentPieces.includes(board[y-1][x-1])) {
-                            console.log((y-1) + "," + (x-1));
                             filteredMoves = filteredMoves.filter(activeMove => {
                                 return activeMove !== move;
                             });
@@ -112,7 +113,6 @@ class PossibleMovesCalculator {
 
                     if(move[0] === -1 && move[1] === 1) {
                         if(!opponentPieces.includes(board[y-1][x+1])) {
-                            console.log((y-1) + "," + (x-1));
                             filteredMoves = filteredMoves.filter(activeMove => {
                                 return activeMove !== move;
                             });
@@ -141,8 +141,6 @@ class PossibleMovesCalculator {
             }
 
         }
-
-        console.log(filteredMoves);
 
         return filteredMoves;
     }
