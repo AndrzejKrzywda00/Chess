@@ -107,8 +107,9 @@ class Game extends Component {
 
                     let graphics = new PIXI.Graphics();
                     let color = (i+j)%2 === 0 ? pattern.light : pattern.dark;
-                    graphics.beginFill(color);
-                    graphics.drawRect(100*i,100*j,100,100);
+                    graphics.beginFill(color)
+                            .drawRect(100*i,100*j,100,100)
+                            .endFill();
 
                     // adding the letters in last row, and numbers in first column
                     if(i === rows-1 || j === 0)
@@ -171,7 +172,6 @@ class Game extends Component {
                     let texture = this.loader.resources[board[i][j]].texture;
                     let piece = new PIXI.Sprite(texture);
                     piece.interactive = true;
-                    //piece.buttonMode = true;
                     piece.cursor = "grab";
                     piece.roundPixels = false;
                     piece.anchor.set(0.5);
@@ -181,7 +181,7 @@ class Game extends Component {
                     piece
                         .on('pointerdown', this.onDragStart)
                         .on('pointerup', this.onDragEnd)
-                        .on('pointerdown', this.onPieceClicked, this)
+                        .on('pointerdown', this.onPieceClicked, this)       // passing reference to the class to make it easier to access objects
                         .on('pointerup', this.onPieceRevoked, this)
                         .on('pointerupoutside', this.onDragEnd)
                         .on('pointermove', this.onDragMove);
@@ -327,9 +327,6 @@ class Game extends Component {
         this.lastX = Game.lastX;
         this.lastY = Game.lastY;
         Game.moveValid = false;
-
-        console.log(this.sprites);
-        console.log(this.board.data);
     }
 
     parseFen(fen) {
