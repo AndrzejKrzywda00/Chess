@@ -86,27 +86,35 @@ class Game extends Component {
         this.displayPieces(startFen);
     }
 
+    /*
+    This method displays the chess board tiles in standard manner,
+    using graphics element with chosen color of fill.
+     */
     displayBoard() {
 
         let columns = this.size.columns;
         let rows = this.size.rows;
+        let pattern = this.pattern;
 
         for(let i=0; i<rows; i++) {
             for(let j=0; j<columns; j++) {
                 if(!this.choosePattern) {
+
                     let graphics = new PIXI.Graphics();
-                    if((i+j)%2 === 0) {
-                        graphics.beginFill(this.pattern.dark);
-                    }
-                    else {
-                        graphics.beginFill(this.pattern.light);
-                    }
+                    let color = (i+j)%2 === 0 ? pattern.dark : pattern.light;
+                    graphics.beginFill(color);
                     graphics.drawRect(100*i,100*j,100,100);
+
+                    // adding the letters in last row, and numbers in first column
+                    if(i === rows-1 || j === 0)
                     this.displayPositionNotation(i,j,graphics, this.pattern.dark, this.pattern.light);
+
+                    // adding each node to the container
                     this.application.stage.addChild(graphics);
                 }
             }
         }
+
     }
 
     displayPositionNotation(i, j, sprite, darkColor, lightColor) {
@@ -145,6 +153,7 @@ class Game extends Component {
         let rows = this.size.rows;
         let columns = this.size.columns;
         let board = this.board.data;
+        this.application.stage.sortableChildren = true;
 
         for(let i=0; i<rows; i++) {
             let line = [];
@@ -177,6 +186,7 @@ class Game extends Component {
         Game.startingX = this.x;
         Game.startingY = this.y;
         this.data = event.data;
+        this.zIndex = 100;
         this.dragging = true;
     }
 
@@ -221,21 +231,20 @@ class Game extends Component {
             // updating the board object
             let oldX = Math.floor(Game.startingX/100);
             let oldY = Math.floor(Game.startingY/100);
-            console.log(oldY + ";" + oldX);
             let pieceSymbol = Game.boardSimplified[oldY][oldX];
+
             Game.boardSimplified[oldY][oldX] = "0";
             Game.boardSimplified[newY][newX] = pieceSymbol;
 
             let audio = new Audio(pieceMove);
             audio.play().catch();
-
-            console.log(Game.boardSimplified);
         }
         else {
             this.x = Game.startingX;
             this.y = Game.startingY;
         }
 
+        this.zIndex = 65;
         this.data = null;
         this.dragging = false;
     }

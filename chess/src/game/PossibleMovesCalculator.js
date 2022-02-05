@@ -74,7 +74,6 @@ class PossibleMovesCalculator {
                     let currentY = y + yIterator;
 
                     while(currentX !== xPosition || currentY !== yPosition) {
-                        console.log(currentX + ";" + currentY);
                         if(board[currentY][currentX] !== "0") {
 
                             filteredMoves = filteredMoves.filter(element => {
