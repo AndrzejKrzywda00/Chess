@@ -105,6 +105,11 @@ const classicFlat = {
     light: "#eeeed2"
 };
 
+const andrut = {
+    dark: "#bc8c6c",
+    light: "#f4dcb4"
+};
+
 patterns.set("classic", classic);
 patterns.set("andrzej", andrzej);
 patterns.set("deepSea", deepSea);
@@ -126,6 +131,7 @@ patterns.set("joker", joker);
 patterns.set("harnasIceTea", harnasIceTea);
 patterns.set("bwm", bmw);
 patterns.set("classicFlat", classicFlat);
+patterns.set("andrut", andrut);
 
 // helper function to parse hex with # symbol to '0x' version
 function parseHexTo0x(patterns) {

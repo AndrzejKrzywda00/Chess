@@ -106,13 +106,13 @@ class Game extends Component {
                 if(!this.choosePattern) {
 
                     let graphics = new PIXI.Graphics();
-                    let color = (i+j)%2 === 0 ? pattern.dark : pattern.light;
+                    let color = (i+j)%2 === 0 ? pattern.light : pattern.dark;
                     graphics.beginFill(color);
                     graphics.drawRect(100*i,100*j,100,100);
 
                     // adding the letters in last row, and numbers in first column
                     if(i === rows-1 || j === 0)
-                    this.displayPositionNotation(i,j,graphics, this.pattern.dark, this.pattern.light);
+                    this.displayPositionNotation(i,j,graphics, this.pattern.light, this.pattern.dark);
 
                     // adding each node to the container
                     this.application.stage.addChild(graphics);
