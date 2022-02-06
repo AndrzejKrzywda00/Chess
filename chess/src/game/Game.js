@@ -292,15 +292,16 @@ class Game extends Component {
         let pieceName = this.board.data[y][x];
         let color = pieceName.toLowerCase() === pieceName ? "black" : "white";
 
-        Game.pieceMoves = new PossibleMovesCalculator(
+        let calculator = new PossibleMovesCalculator(
             this.possibleMoves,
             pieceName,
             color,
             this.board.data,
             {x: x, y: y},
             "",
-            "")
-            .filteredMoves;
+            "");
+
+        Game.pieceMoves = calculator.getFilteredMoves();
 
         Game.boardSimplified = this.board.data;
         Game.sprites = this.sprites;

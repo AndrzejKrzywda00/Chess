@@ -12,14 +12,12 @@ class PossibleMovesCalculator {
                 enPassantPossibilities)
     {
         this.board = board;
-        this.moves = allMoves.get(pieceName.toLowerCase());
+        this.moves = allMoves.get(pieceName);
         this.castlingRights = castlingRights;
         this.enPassant = enPassantPossibilities;
         this.position = position;
         this.color = color;
         this.pieceName = pieceName;
-
-        this.filteredMoves = this.calculate();
     }
 
     calculate() {
@@ -29,17 +27,9 @@ class PossibleMovesCalculator {
         let board = this.board;
         let moves = this.moves;
 
-        // reversing the y coordinates for the position
-        if(this.color === "black") {
-            moves.forEach(element => {
-                if(element[1] !== -3 && element[1] !== 4) {     // condition to not reverse castling
-                    if(element[0] !== 0) element[0] = -1 * element[0];
-                    if(element[1] !== 0) element[1] = -1 * element[1];
-                }
-            });
-        }
-
         let filteredMoves = Array.from(moves);
+
+        console.log(filteredMoves);
 
         let blackPieces = ["r","n","b","q","k","p"];
         let whitePieces = ["R","N","B","Q","K","P"];
@@ -143,8 +133,8 @@ class PossibleMovesCalculator {
         return filteredMoves;
     }
 
-    calculateFieldsAttackedByOpponent() {
-
+    getFilteredMoves() {
+        return this.calculate();
     }
 
 }
