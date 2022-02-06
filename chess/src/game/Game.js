@@ -53,6 +53,7 @@ class Game extends Component {
         this.lastX = null;
         this.lastY = null;
         this.moveValid = false;
+        this.lastCastleData = null;
         this.pattern = props.boardPattern;
         this.choosePattern = props.chooseGradientOverPattern;
     }
@@ -206,8 +207,12 @@ class Game extends Component {
         this.cursor = "grab";
 
         try {
+
             let newX = Math.floor(this.data.getLocalPosition(this.parent).x/100);
             let newY = Math.floor(this.data.getLocalPosition(this.parent).y/100);
+
+            let oldX = Math.floor(Game.startingX/100);
+            let oldY = Math.floor(Game.startingY/100);
 
             if(newX < 0) {
                 newX = 0;
@@ -223,12 +228,18 @@ class Game extends Component {
             }
 
             let offset = [
-                newY - Math.floor(Game.startingY/100),
-                newX - Math.floor(Game.startingX/100)
+                newY - oldY,
+                newX - oldX
             ];
 
+            // parameters to finish the move correctly
             let possibleMoves = Game.pieceMoves;
             let moveValid = false;
+            let castling = {
+                queenside: false,
+                kingside: false
+            };
+            let enPassant = false;
 
             possibleMoves.forEach(element => {
                 if(element[0] === offset[0] && element[1] === offset[1]) {
@@ -236,23 +247,71 @@ class Game extends Component {
                 }
             });
 
+            // checking if it was castling
+            if(Game.boardSimplified[oldY][oldX].toLowerCase() === "k" && offset[0] === 0) {
+                if(offset[1] === 3) {
+                    castling.kingside = true;
+                }
+                if(offset[1] === -4) {
+                    castling.queenside = true;
+                }
+            }
+
+            // checking if it was en passant
+            if(Game.boardSimplified[oldY][oldX].toLowerCase() === "p") {
+                enPassant = true;
+            }
+
             if(moveValid) {
 
                 // inform finisher that can take piece
                 Game.moveValid = true;
+
+                if(castling.queenside)  {
+                    newX +=2;
+                }
+                if(castling.kingside) {
+                    newX -= 1;
+                }
 
                 // updating the coordinates of the sprite
                 this.x = newX*100+50;
                 this.y = newY*100+50;
 
                 // updating the board object
-                let oldX = Math.floor(Game.startingX/100);
-                let oldY = Math.floor(Game.startingY/100);
                 let pieceSymbol = Game.boardSimplified[oldY][oldX];
 
                 // setting up new position in the virtual board
                 Game.boardSimplified[oldY][oldX] = "0";
                 Game.boardSimplified[newY][newX] = pieceSymbol;
+
+                // additionally moving the rook
+                if(castling.queenside) {
+                    let oldRookY = pieceSymbol === pieceSymbol.toLowerCase() ? 0 : 7;
+                    let oldRookX = 0;
+                    Game.boardSimplified[oldRookY][oldRookX] = "0";
+                    let newRookX = oldRookX + 3;
+                    Game.boardSimplified[oldRookY][newRookX] = pieceSymbol === pieceSymbol.toLowerCase() ? "r" : "R";
+                    if(pieceSymbol === pieceSymbol.toLowerCase()) {
+                        Game.lastCastleData = "q";
+                    }
+                    else {
+                        Game.lastCastleData = "Q";
+                    }
+                }
+                if(castling.kingside) {
+                    let oldRookY = pieceSymbol === pieceSymbol.toLowerCase() ? 0 : 7;
+                    let oldRookX = 7;
+                    Game.boardSimplified[oldRookY][oldRookX] = "0";
+                    let newRookX = oldRookX - 2;
+                    Game.boardSimplified[oldRookY][newRookX] = pieceSymbol === pieceSymbol.toLowerCase() ? "r" : "R";
+                    if(pieceSymbol === pieceSymbol.toLowerCase()) {
+                        Game.lastCastleData = "k";
+                    }
+                    else {
+                        Game.lastCastleData = "K";
+                    }
+                }
 
                 // playing the sound of the move
                 let audio = new Audio(pieceMove);
@@ -298,18 +357,26 @@ class Game extends Component {
             color,
             this.board.data,
             {x: x, y: y},
-            "",
+            "QKqk",
             "");
 
         Game.pieceMoves = calculator.getFilteredMoves();
 
         Game.boardSimplified = this.board.data;
         Game.sprites = this.sprites;
+        Game.lastCastleData = this.lastCastleData;
     }
 
+    /*
+    Listener of revoking the grab of the piece
+    Performs tasks related to the class, so
+    Removing the sprites from the grid
+    And updating the virtual board of sprites
+     */
     onPieceRevoked() {
 
         if(Game.moveValid) {
+
             let newY = Game.lastY;
             let newX = Game.lastX;
 
@@ -318,11 +385,45 @@ class Game extends Component {
 
             this.application.stage.removeChild(this.sprites[newY][newX]);
 
+            if(Game.lastCastleData != null) {
+
+                let castlingType = Game.lastCastleData;
+
+                let rookOffsets = new Map();
+                rookOffsets.set("Q", 3);
+                rookOffsets.set("q", 3);
+                rookOffsets.set("K", -2);
+                rookOffsets.set("k", -2);
+
+                let oldRookX = null;
+                let oldRookY = null;
+                if(castlingType === "Q" || castlingType === "q") {
+                    oldRookX = 0;
+                }
+                if(castlingType === "K" || castlingType === "k") {
+                    oldRookX = 7;
+                }
+                if(castlingType === "K" || castlingType === "Q") {
+                    oldRookY = 7;
+                }
+                if(castlingType === "k" || castlingType === "q") {
+                    oldRookY = 0;
+                }
+
+                console.log(oldRookY + "," +oldRookX);
+                console.log(oldRookX+rookOffsets.get(castlingType));
+
+                this.sprites[oldRookY][oldRookX].x = 100*(oldRookX+rookOffsets.get(castlingType))+50;
+                this.sprites[oldRookY][oldRookX+rookOffsets.get(castlingType)] = this.sprites[oldRookY][oldRookX];
+                this.sprites[oldRookY][oldRookX] = undefined;
+            }
+
             // removing the chosen sprite from the board
             Game.sprites[newY][newX] = Game.sprites[oldY][oldX];
             Game.sprites[oldY][oldX] = undefined;
         }
 
+        this.lastCastleData = null;
         this.board.data = Game.boardSimplified;
         this.sprites = Game.sprites;
         this.lastX = Game.lastX;

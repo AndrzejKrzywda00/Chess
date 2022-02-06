@@ -115,7 +115,13 @@ for(let i=0; i<whitePawnMoves.length; i++) {
 const blackKingMoves = [];
 
 for(let i=0; i<whiteKingMoves.length; i++) {
-    let move = [-whiteKingMoves[i][0], -whiteKingMoves[i][1]];
+    let move = null;
+    if(whiteKingMoves[i][1] === 3 || whiteKingMoves[i][1] === -4) {
+        move = [whiteKingMoves[i][0], whiteKingMoves[i][1]];
+    }
+    else {
+        move = [-whiteKingMoves[i][0], -whiteKingMoves[i][1]];
+    }
     blackKingMoves.push(move);
 }
 

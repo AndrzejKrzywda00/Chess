@@ -13,7 +13,12 @@ class PossibleMovesCalculator {
     {
         this.board = board;
         this.moves = allMoves.get(pieceName);
-        this.castlingRights = castlingRights;
+        this.castlingRights = [];
+
+        for(let j=0; j<castlingRights.length; j++) {
+            this.castlingRights.push(castlingRights[j]);
+        }
+
         this.enPassant = enPassantPossibilities;
         this.position = position;
         this.color = color;
@@ -55,7 +60,14 @@ class PossibleMovesCalculator {
                 let playersPieces = allMoves.get(this.color);
 
                 if(board[yPosition][xPosition] !== "0" && playersPieces.includes(board[yPosition][xPosition])) {
-                    rejectedMoves.push(move);
+                    if(this.pieceName.toLowerCase() === "k" && move[0] === 0) {
+                        if(move[1] !== 3 && move[1] !== -4) {
+                            rejectedMoves.push(move);
+                        }
+                    }
+                    else {
+                        rejectedMoves.push(move);
+                    }
                 }
 
                 // check if the move is not blocked by any piece (for any piece that is not a knight)
@@ -119,9 +131,15 @@ class PossibleMovesCalculator {
             }
         }
 
+        console.log(this.board);
+
         console.log(acceptedMoves);
 
         return acceptedMoves;
+    }
+
+    calculatePositionsControlledByBlack() {
+
     }
 
     getFilteredMoves() {
