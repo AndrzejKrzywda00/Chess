@@ -27,10 +27,6 @@ class PossibleMovesCalculator {
         let board = this.board;
         let moves = this.moves;
 
-        let filteredMoves = Array.from(moves);
-
-        console.log(filteredMoves);
-
         let blackPieces = ["r","n","b","q","k","p"];
         let whitePieces = ["R","N","B","Q","K","P"];
         let allMoves = new Map();
@@ -47,9 +43,7 @@ class PossibleMovesCalculator {
 
             // 1st checking if the move doesn't go over the board
             if(y + move[0] < 0 || y + move[0] > 7 || x + move[1] < 0 || x + move[1] > 7) {
-                filteredMoves = filteredMoves.filter(element => {
-                    return element !== move;
-                });
+                rejectedMoves.push(move);
             }
 
             else {
@@ -61,9 +55,7 @@ class PossibleMovesCalculator {
                 let playersPieces = allMoves.get(this.color);
 
                 if(board[yPosition][xPosition] !== "0" && playersPieces.includes(board[yPosition][xPosition])) {
-                    filteredMoves = filteredMoves.filter(element => {
-                        return element !== move;
-                    });
+                    rejectedMoves.push(move);
                 }
 
                 // check if the move is not blocked by any piece (for any piece that is not a knight)
@@ -76,10 +68,7 @@ class PossibleMovesCalculator {
 
                     while(currentX !== xPosition || currentY !== yPosition) {
                         if(board[currentY][currentX] !== "0") {
-
-                            filteredMoves = filteredMoves.filter(element => {
-                                return element !== move;
-                            });
+                            rejectedMoves.push(move);
                         }
                         currentX += xIterator;
                         currentY += yIterator;
@@ -92,9 +81,7 @@ class PossibleMovesCalculator {
                     // double move only on 6th rank for down and 1st rank for up
                     let allowedRank = this.color === "black" ? 1 : 6;
                     if(y !== allowedRank) {
-                        filteredMoves = filteredMoves.filter(move => {
-                            return Math.abs(move[0]) !== 2;
-                        });
+                        if(Math.abs(move[0]) === 2) rejectedMoves.push(move);
                     }
 
                     // second removing taking the piece move, when there is no opponent
@@ -103,17 +90,13 @@ class PossibleMovesCalculator {
 
                     if(Math.abs(move[0]) === 1 && Math.abs(move[1]) === 1) {
                         if(!opponentPieces.includes(board[yPosition][xPosition])) {
-                            filteredMoves = filteredMoves.filter(activeMove => {
-                                return activeMove !== move;
-                            })
+                            rejectedMoves.push(move);
                         }
                     }
 
                     if(move[1] === 0) {
                         if(board[yPosition][xPosition] !== "0") {
-                            filteredMoves = filteredMoves.filter(activeMove => {
-                                return activeMove !== move;
-                            })
+                            rejectedMoves.push(move);
                         }
                     }
 
@@ -128,9 +111,17 @@ class PossibleMovesCalculator {
 
         }
 
-        console.log(filteredMoves);
+        let acceptedMoves = [];
 
-        return filteredMoves;
+        for(let i=0; i<moves.length; i++) {
+            if (!rejectedMoves.includes(moves[i])) {
+                acceptedMoves.push(moves[i]);
+            }
+        }
+
+        console.log(acceptedMoves);
+
+        return acceptedMoves;
     }
 
     getFilteredMoves() {
