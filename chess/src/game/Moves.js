@@ -65,8 +65,8 @@ let kingMoves = [
     [-1,1],
     [0,1],
     [1,1],
-    [0,3],         // king side castling
-    [0,-4]         // queen side castling
+    [0,3],         // king side castling for white
+    [0,-4]         // queen side castling for white
 ];
 
 // adding all moves to map

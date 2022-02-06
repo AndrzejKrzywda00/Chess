@@ -3,7 +3,7 @@ const symbols = require("../front/patterns/Symbols");
 /*
 This is utility class that will parse positions to elegant chess notation.
  */
-class chessNotationParser {
+class ChessNotationParser {
 
     constructor(props) {
         this.pieceName = props.pieceName;

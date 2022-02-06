@@ -27,28 +27,33 @@ class PossibleMovesCalculator {
         let x = this.position.x;
         let y = this.position.y;
         let board = this.board;
+        let moves = this.moves;
 
         // reversing the y coordinates for the position
         if(this.color === "black") {
-            this.moves.forEach(element => {
-                element[0] = -1 * element[0];
-                element[1] = -1 * element[1];
+            moves.forEach(element => {
+                if(element[1] !== -3 && element[1] !== 4) {     // condition to not reverse castling
+                    if(element[0] !== 0) element[0] = -1 * element[0];
+                    if(element[1] !== 0) element[1] = -1 * element[1];
+                }
             });
         }
 
-        let filteredMoves = Array.from(this.moves);
+        let filteredMoves = Array.from(moves);
 
         let blackPieces = ["r","n","b","q","k","p"];
         let whitePieces = ["R","N","B","Q","K","P"];
-        let piecesMoves = new Map();
-        piecesMoves.set("black", blackPieces);
-        piecesMoves.set("white", whitePieces);
+        let allMoves = new Map();
+        allMoves.set("black", blackPieces);
+        allMoves.set("white", whitePieces);
+
+        let rejectedMoves = [];
 
         // TODO -- optimize this to make less operations, and be quicker
 
-        for(let i=0; i<this.moves.length; i++) {
+        for(let i=0; i<moves.length; i++) {
 
-            let move = this.moves[i];
+            let move = moves[i];
 
             // 1st checking if the move doesn't go over the board
             if(y + move[0] < 0 || y + move[0] > 7 || x + move[1] < 0 || x + move[1] > 7) {
@@ -56,13 +61,14 @@ class PossibleMovesCalculator {
                     return element !== move;
                 });
             }
+
             else {
 
                 // finding if the spot is free to go or take opponent's piece
                 // filtering out the possibility to take your own piece
                 let yPosition = parseInt(y + move[0]);
                 let xPosition = parseInt(x + move[1]);
-                let playersPieces = piecesMoves.get(this.color);
+                let playersPieces = allMoves.get(this.color);
 
                 if(board[yPosition][xPosition] !== "0" && playersPieces.includes(board[yPosition][xPosition])) {
                     filteredMoves = filteredMoves.filter(element => {
@@ -93,47 +99,31 @@ class PossibleMovesCalculator {
                 // filter out not permitted moves for a pawn
                 if(this.pieceName.toLowerCase() === "p") {
 
-                    // first en-passant
-                    if(y !== 6) {
+                    // double move only on 6th rank for down and 1st rank for up
+                    let allowedRank = this.color === "black" ? 1 : 6;
+                    if(y !== allowedRank) {
                         filteredMoves = filteredMoves.filter(move => {
-                            return move[0] !== -2;
+                            return Math.abs(move[0]) !== 2;
                         });
                     }
 
                     // second removing taking the piece move, when there is no opponent
                     let oppositeColor = this.color === "white" ? "black" : "white";
-                    let opponentPieces = piecesMoves.get(oppositeColor);
+                    let opponentPieces = allMoves.get(oppositeColor);
 
-                    if(move[0] === -1 && move[1] === -1) {
-                        if(!opponentPieces.includes(board[y-1][x-1])) {
+                    if(Math.abs(move[0]) === 1 && Math.abs(move[1]) === 1) {
+                        if(!opponentPieces.includes(board[yPosition][xPosition])) {
                             filteredMoves = filteredMoves.filter(activeMove => {
                                 return activeMove !== move;
-                            });
-                        }
-                    }
-
-                    if(move[0] === -1 && move[1] === 1) {
-                        if(!opponentPieces.includes(board[y-1][x+1])) {
-                            filteredMoves = filteredMoves.filter(activeMove => {
-                                return activeMove !== move;
-                            });
+                            })
                         }
                     }
 
                     if(move[1] === 0) {
-                        if(move[0] === -1 && y-1 >= 0) {
-                            if(board[y-1][x] !== "0") {
-                                filteredMoves = filteredMoves.filter(activeMove => {
-                                   return activeMove !== move;
-                                });
-                            }
-                        }
-                        if(move[0] === -2 && y-2 >= 0) {
-                            if(board[y-2][x] !== "0") {
-                                filteredMoves = filteredMoves.filter(activeMove => {
-                                    return activeMove !== move;
-                                })
-                            }
+                        if(board[yPosition][xPosition] !== "0") {
+                            filteredMoves = filteredMoves.filter(activeMove => {
+                                return activeMove !== move;
+                            })
                         }
                     }
 
@@ -148,7 +138,13 @@ class PossibleMovesCalculator {
 
         }
 
+        console.log(filteredMoves);
+
         return filteredMoves;
+    }
+
+    calculateFieldsAttackedByOpponent() {
+
     }
 
 }
