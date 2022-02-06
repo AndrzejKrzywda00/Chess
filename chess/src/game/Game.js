@@ -16,7 +16,8 @@ import P from "../img/white_pawn_2.png";
 import q from "../img/black_queen_2.png";
 import moves from "./Moves";
 import PossibleMovesCalculator from "./PossibleMovesCalculator";
-import pieceMove from "../sounds/pieceMove.mp3";
+import pieceMoveSound from "../sounds/pieceMove.mp3";
+import castleSound from "../sounds/pieceCastle.mp3";
 import "./Game.css";
 
 class Game extends Component {
@@ -314,9 +315,15 @@ class Game extends Component {
                 }
 
                 // playing the sound of the move
-                let audio = new Audio(pieceMove);
-                audio.play().catch();
-
+                if(!castling.kingside && !castling.queenside) {
+                    let audio = new Audio(pieceMoveSound);
+                    audio.play().catch();
+                }
+                else {
+                    let audio = new Audio(castleSound);
+                    audio.play().catch();
+                }
+                
                 // saving the last position
                 Game.lastX = newX;
                 Game.lastY = newY;
