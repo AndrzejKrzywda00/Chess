@@ -147,9 +147,21 @@ class PossibleMovesCalculator {
         return acceptedMoves;
     }
 
-    calculatePositionsControlledByBlack() {
+    calculatePositionsControlledByOpponent(opponentColor) {
+
+        // so calculate all positions controlled by opponent
+        // understood as: fields where opponent can move in next move + counting the fields on which are his pieces
+        let allPieces = new Map();
+        allPieces.set("white", ["R","B","N","Q","K","P"]);
+        allPieces.set("black", ["r","b","n","q","k","p"]);
+
+        let opponentPieces = allPieces.get(opponentColor);
+        let possibleOpponentMoves = this.calculate();
+
+        
 
     }
+
 
     getFilteredMoves() {
         return this.calculate();

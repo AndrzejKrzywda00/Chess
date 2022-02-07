@@ -123,6 +123,9 @@ class Game extends Component {
                     // adding each node to the container
                     this.application.stage.addChild(graphics);
                 }
+                else {
+                    // TODO -- generate background from images
+                }
             }
         }
 
