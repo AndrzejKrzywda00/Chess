@@ -13,6 +13,7 @@ function App() {
       <Game
           boardPattern={randomPattern}
           chooseGradientOverPattern={false}
+          scale={118}
       />
     </div>
   );

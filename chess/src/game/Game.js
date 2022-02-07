@@ -25,7 +25,12 @@ class Game extends Component {
     constructor(props) {
         super(props);
         this.pixi_cnt = null;
-        this.application = new PIXI.Application({width: 800, height: 800, backgroundAlpha: 0.0});
+        this.scale = props.scale;
+        this.size = {
+            rows: 8,
+            columns: 8
+        };
+        this.application = new PIXI.Application({width: this.size.columns*this.scale, height: this.size.rows*this.scale, backgroundAlpha: 0.0});
         this.loader = null;
         this.dragging = false;
         this.data = null;
@@ -39,10 +44,6 @@ class Game extends Component {
         };
         this.startingX = null;
         this.startingY = null;
-        this.size = {
-            rows: 8,
-            columns: 8
-        }
         this.piece = {
             sprite: null,
             symbol: null,
@@ -103,6 +104,7 @@ class Game extends Component {
         let columns = this.size.columns;
         let rows = this.size.rows;
         let pattern = this.pattern;
+        let scale = this.scale;
 
         for(let i=0; i<rows; i++) {
             for(let j=0; j<columns; j++) {
@@ -111,7 +113,7 @@ class Game extends Component {
                     let graphics = new PIXI.Graphics();
                     let color = (i+j)%2 === 0 ? pattern.light : pattern.dark;
                     graphics.beginFill(color)
-                            .drawRect(100*i,100*j,100,100)
+                            .drawRect(scale*i,scale*j,scale,scale)
                             .endFill();
 
                     // adding the letters in last row, and numbers in first column
@@ -133,6 +135,7 @@ class Game extends Component {
     displayPositionNotation(i, j, sprite, darkColor, lightColor) {
 
         let rows = this.size.rows;
+        let scale = this.scale;
 
         let columnText = ["8", "7", "6", "5", "4", "3", "2", "1"];
         let rowText = ["a","b","c","d","e","f","g","h"];
@@ -143,14 +146,14 @@ class Game extends Component {
         if(i === rows-1) {
             let color = j%2 !== 0 ? lightColorHex : darkColorHex;
             let text = new PIXI.Text(rowText[j],{fill: color, fontSize: 18});
-            text.setTransform(100*j+84,100*i+75);
+            text.setTransform(scale*j+0.84*scale,scale*i+0.75*scale);
             sprite.addChild(text);
         }
 
         if(j === 0) {
             let color = i%2 === 0 ? lightColorHex : darkColorHex;
             let text = new PIXI.Text(columnText[i],{fill: color, fontSize: 18});
-            text.setTransform(100*j+5,100*i+5);
+            text.setTransform(scale*j+0.05*scale,scale*i+0.05*scale);
             sprite.addChild(text);
         }
 
@@ -167,6 +170,7 @@ class Game extends Component {
         let columns = this.size.columns;
         let board = this.board.data;
         this.application.stage.sortableChildren = true;
+        let scale = this.scale;
 
         for(let i=0; i<rows; i++) {
             let line = [];
@@ -178,7 +182,7 @@ class Game extends Component {
                     piece.cursor = "grab";
                     piece.roundPixels = false;
                     piece.anchor.set(0.5);
-                    piece.setTransform(100*j+50,100*i+50,0.40,0.40);
+                    piece.setTransform(scale*j+scale/2,scale*i+scale/2,0.472,0.472);
                     this.application.stage.addChild(piece);
                     line.push(piece);
                     piece
@@ -193,6 +197,7 @@ class Game extends Component {
             }
             this.sprites.push(line);
         }
+
     }
 
     onDragStart(event) {
@@ -207,14 +212,15 @@ class Game extends Component {
     onDragEnd() {
 
         this.cursor = "grab";
+        let scale = Game.scale;
 
         try {
 
-            let newX = Math.floor(this.data.getLocalPosition(this.parent).x/100);
-            let newY = Math.floor(this.data.getLocalPosition(this.parent).y/100);
+            let newX = Math.floor(this.data.getLocalPosition(this.parent).x/scale);
+            let newY = Math.floor(this.data.getLocalPosition(this.parent).y/scale);
 
-            let oldX = Math.floor(Game.startingX/100);
-            let oldY = Math.floor(Game.startingY/100);
+            let oldX = Math.floor(Game.startingX/scale);
+            let oldY = Math.floor(Game.startingY/scale);
 
             if(newX < 0) {
                 newX = 0;
@@ -257,6 +263,24 @@ class Game extends Component {
                 if(offset[1] === -4) {
                     castling.queenside = true;
                 }
+
+            }
+
+            if(Game.boardSimplified[oldY][oldX].toLowerCase() === "k") {
+                if(offset[1] !== 3 && offset[1] !== -4) {
+                    let color = Game.boardSimplified[oldY][oldX].toLowerCase() === Game.boardSimplified[oldY][oldX] ? "black" : "white";
+                    let rights = [];
+                    if(color === "white") {
+                        rights = ["Q","K"];
+                    }
+                    if(color === "black") {
+                        rights = ["q","k"];
+                    }
+                    Game.castlingRights = Game.castlingRights.filter(right => {
+                        console.log(!rights.includes(right));
+                        return !rights.includes(right);
+                    });
+                }
             }
 
             // clean all en_passants
@@ -291,8 +315,8 @@ class Game extends Component {
                 }
 
                 // updating the coordinates of the sprite
-                this.x = newX*100+50;
-                this.y = newY*100+50;
+                this.x = (newX*scale)+scale/2;
+                this.y = (newY*scale)+scale/2;
 
                 // updating the board object
                 let pieceSymbol = Game.boardSimplified[oldY][oldX];
@@ -390,8 +414,10 @@ class Game extends Component {
      */
     onPieceClicked() {
 
-        let x = Math.floor(Game.startingX/100);
-        let y = Math.floor(Game.startingY/100);
+        let scale = this.scale;
+
+        let x = Math.floor(Game.startingX/scale);
+        let y = Math.floor(Game.startingY/scale);
 
         let pieceName = this.board.data[y][x];
         let color = pieceName.toLowerCase() === pieceName ? "black" : "white";
@@ -411,6 +437,7 @@ class Game extends Component {
         Game.sprites = this.sprites;
         Game.castlingRights = this.castlingRights;
         Game.lastCastleData = this.lastCastleData;
+        Game.scale = this.scale;
     }
 
     /*
@@ -421,13 +448,15 @@ class Game extends Component {
      */
     onPieceRevoked() {
 
+        let scale = this.scale;
+
         if(Game.moveValid) {
 
             let newY = Game.lastY;
             let newX = Game.lastX;
 
-            let oldY = Math.floor(Game.startingY/100);
-            let oldX = Math.floor(Game.startingX/100);
+            let oldY = Math.floor(Game.startingY/scale);
+            let oldX = Math.floor(Game.startingX/scale);
 
             this.application.stage.removeChild(this.sprites[newY][newX]);
 
@@ -456,7 +485,7 @@ class Game extends Component {
                     oldRookY = 0;
                 }
 
-                this.sprites[oldRookY][oldRookX].x = 100*(oldRookX+rookOffsets.get(castlingType))+50;
+                this.sprites[oldRookY][oldRookX].x = scale*(oldRookX+rookOffsets.get(castlingType))+scale/2;
                 this.sprites[oldRookY][oldRookX+rookOffsets.get(castlingType)] = this.sprites[oldRookY][oldRookX];
                 this.sprites[oldRookY][oldRookX] = undefined;
             }

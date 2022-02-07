@@ -29,6 +29,8 @@ class PossibleMovesCalculator {
         let board = this.board;
         let moves = this.moves;
 
+        console.log(this.castlingRights);
+
         let blackPieces = ["r","n","b","q","k","p","e"];
         let whitePieces = ["R","N","B","Q","K","P","E"];
         let allMoves = new Map();
