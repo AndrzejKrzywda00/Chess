@@ -1,6 +1,8 @@
 /*
 This is the main class to calculate all the possible moves the selected piece can make in position.
  */
+import {act} from "@testing-library/react";
+
 class PossibleMovesCalculator {
 
     constructor(allMoves,
@@ -13,12 +15,7 @@ class PossibleMovesCalculator {
     {
         this.board = board;
         this.moves = allMoves.get(pieceName);
-        this.castlingRights = [];
-
-        for(let j=0; j<castlingRights.length; j++) {
-            this.castlingRights.push(castlingRights[j]);
-        }
-
+        this.castlingRights = castlingRights;
         this.enPassant = enPassantPossibilities;
         this.position = position;
         this.color = color;
@@ -39,8 +36,6 @@ class PossibleMovesCalculator {
         allMoves.set("white", whitePieces);
 
         let rejectedMoves = [];
-
-        // TODO -- optimize this to make less operations by adding families of moves
 
         for(let i=0; i<moves.length; i++) {
 
@@ -114,8 +109,24 @@ class PossibleMovesCalculator {
 
                 }
 
-                // remove all moves that can cause a check
+                // remove all moves that are not valid for a king
                 if(this.pieceName.toLowerCase() === "k") {
+
+                    let activeCastleRight = null;
+                    if(move[0] === 0) {
+                        if(move[1] === 3) {
+                            activeCastleRight = this.color === "white" ? "K" : "k";
+                            if(!this.castlingRights.includes(activeCastleRight)) {
+                                rejectedMoves.push(move);
+                            }
+                        }
+                        if(move[1] === -4) {
+                            activeCastleRight = this.color === "white" ? "Q" : "q";
+                            if(!this.castlingRights.includes(activeCastleRight)) {
+                                rejectedMoves.push(move);
+                            }
+                        }
+                    }
 
                 }
 
@@ -130,9 +141,6 @@ class PossibleMovesCalculator {
                 acceptedMoves.push(moves[i]);
             }
         }
-
-        console.log(acceptedMoves);
-        console.log(board);
 
         return acceptedMoves;
     }

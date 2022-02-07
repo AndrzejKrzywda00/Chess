@@ -264,8 +264,6 @@ class Game extends Component {
             let whiteRank = 5;
             let blackRank = 2;
 
-            console.log(Game.boardSimplified);
-
             for(let i=0; i<columns; i++) {
                 if(Game.boardSimplified[blackRank][i] === "e") {
                     Game.boardSimplified[blackRank][i] = "0";
@@ -278,7 +276,6 @@ class Game extends Component {
             // checking if it was en passant move
             if(Game.boardSimplified[oldY][oldX].toLowerCase() === "p" && Math.abs(offset[0]) === 2) {
                 enPassant = true;
-                console.log("en passant");
             }
 
             if(moveValid) {
@@ -306,6 +303,7 @@ class Game extends Component {
 
                 // additionally moving the rook
                 if(castling.queenside) {
+                    let additionalCastleToRemove = null;
                     let oldRookY = pieceSymbol === pieceSymbol.toLowerCase() ? 0 : 7;
                     let oldRookX = 0;
                     Game.boardSimplified[oldRookY][oldRookX] = "0";
@@ -313,12 +311,21 @@ class Game extends Component {
                     Game.boardSimplified[oldRookY][newRookX] = pieceSymbol === pieceSymbol.toLowerCase() ? "r" : "R";
                     if(pieceSymbol === pieceSymbol.toLowerCase()) {
                         Game.lastCastleData = "q";
+                        additionalCastleToRemove = "k";
                     }
                     else {
                         Game.lastCastleData = "Q";
+                        additionalCastleToRemove = "K";
                     }
+                    Game.castlingRights = Game.castlingRights.filter(right => {
+                        return right !== Game.lastCastleData;
+                    });
+                    Game.castlingRights = Game.castlingRights.filter(right => {
+                        return right !== additionalCastleToRemove;
+                    });
                 }
                 if(castling.kingside) {
+                    let additionalCastleToRemove = null;
                     let oldRookY = pieceSymbol === pieceSymbol.toLowerCase() ? 0 : 7;
                     let oldRookX = 7;
                     Game.boardSimplified[oldRookY][oldRookX] = "0";
@@ -326,10 +333,18 @@ class Game extends Component {
                     Game.boardSimplified[oldRookY][newRookX] = pieceSymbol === pieceSymbol.toLowerCase() ? "r" : "R";
                     if(pieceSymbol === pieceSymbol.toLowerCase()) {
                         Game.lastCastleData = "k";
+                        additionalCastleToRemove = "q";
                     }
                     else {
                         Game.lastCastleData = "K";
+                        additionalCastleToRemove = "Q";
                     }
+                    Game.castlingRights = Game.castlingRights.filter(right => {
+                        return right !== Game.lastCastleData;
+                    });
+                    Game.castlingRights = Game.castlingRights.filter(right => {
+                        return right !== additionalCastleToRemove;
+                    });
                 }
 
                 if(enPassant) {
@@ -387,13 +402,14 @@ class Game extends Component {
             color,
             this.board.data,
             {x: x, y: y},
-            "QKqk",
+            this.castlingRights,
             "");
 
         Game.pieceMoves = calculator.getFilteredMoves();
 
         Game.boardSimplified = this.board.data;
         Game.sprites = this.sprites;
+        Game.castlingRights = this.castlingRights;
         Game.lastCastleData = this.lastCastleData;
     }
 
@@ -440,9 +456,6 @@ class Game extends Component {
                     oldRookY = 0;
                 }
 
-                console.log(oldRookY + "," +oldRookX);
-                console.log(oldRookX+rookOffsets.get(castlingType));
-
                 this.sprites[oldRookY][oldRookX].x = 100*(oldRookX+rookOffsets.get(castlingType))+50;
                 this.sprites[oldRookY][oldRookX+rookOffsets.get(castlingType)] = this.sprites[oldRookY][oldRookX];
                 this.sprites[oldRookY][oldRookX] = undefined;
@@ -458,6 +471,7 @@ class Game extends Component {
         this.sprites = Game.sprites;
         this.lastX = Game.lastX;
         this.lastY = Game.lastY;
+        this.castlingRights = Game.castlingRights;
         Game.moveValid = false;
     }
 
