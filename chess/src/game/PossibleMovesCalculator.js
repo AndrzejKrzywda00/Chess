@@ -32,15 +32,15 @@ class PossibleMovesCalculator {
         let board = this.board;
         let moves = this.moves;
 
-        let blackPieces = ["r","n","b","q","k","p"];
-        let whitePieces = ["R","N","B","Q","K","P"];
+        let blackPieces = ["r","n","b","q","k","p","e"];
+        let whitePieces = ["R","N","B","Q","K","P","E"];
         let allMoves = new Map();
         allMoves.set("black", blackPieces);
         allMoves.set("white", whitePieces);
 
         let rejectedMoves = [];
 
-        // TODO -- optimize this to make less operations, and be quicker
+        // TODO -- optimize this to make less operations by adding families of moves
 
         for(let i=0; i<moves.length; i++) {
 
@@ -131,9 +131,8 @@ class PossibleMovesCalculator {
             }
         }
 
-        console.log(this.board);
-
         console.log(acceptedMoves);
+        console.log(board);
 
         return acceptedMoves;
     }

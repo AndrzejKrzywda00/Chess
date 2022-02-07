@@ -17,7 +17,7 @@ import q from "../img/black_queen_2.png";
 import moves from "./Moves";
 import PossibleMovesCalculator from "./PossibleMovesCalculator";
 import pieceMoveSound from "../sounds/pieceMove.mp3";
-import castleSound from "../sounds/pieceCastle.mp3";
+import castleSound from "../sounds/castling_sound_2 (2).mp3";
 import "./Game.css";
 
 class Game extends Component {
@@ -31,7 +31,7 @@ class Game extends Component {
         this.data = null;
         this.possibleMoves = moves;
         this.board = {
-            castlingRights: null,
+            castlingRights: [],
             en_passants: [],
             turn: 0,
             data: [],
@@ -55,6 +55,7 @@ class Game extends Component {
         this.lastY = null;
         this.moveValid = false;
         this.lastCastleData = null;
+        this.castlingRights = [];
         this.pattern = props.boardPattern;
         this.choosePattern = props.chooseGradientOverPattern;
     }
@@ -258,9 +259,26 @@ class Game extends Component {
                 }
             }
 
-            // checking if it was en passant
-            if(Game.boardSimplified[oldY][oldX].toLowerCase() === "p") {
+            // clean all en_passants
+            let columns = 8;
+            let whiteRank = 5;
+            let blackRank = 2;
+
+            console.log(Game.boardSimplified);
+
+            for(let i=0; i<columns; i++) {
+                if(Game.boardSimplified[blackRank][i] === "e") {
+                    Game.boardSimplified[blackRank][i] = "0";
+                }
+                if(Game.boardSimplified[whiteRank][i] === "E") {
+                    Game.boardSimplified[whiteRank][i] = "0";
+                }
+            }
+
+            // checking if it was en passant move
+            if(Game.boardSimplified[oldY][oldX].toLowerCase() === "p" && Math.abs(offset[0]) === 2) {
                 enPassant = true;
+                console.log("en passant");
             }
 
             if(moveValid) {
@@ -268,7 +286,7 @@ class Game extends Component {
                 // inform finisher that can take piece
                 Game.moveValid = true;
 
-                if(castling.queenside)  {
+                if(castling.queenside) {
                     newX +=2;
                 }
                 if(castling.kingside) {
@@ -314,6 +332,11 @@ class Game extends Component {
                     }
                 }
 
+                if(enPassant) {
+                    let yVector = pieceSymbol.toLowerCase() === pieceSymbol ? -1 : 1;
+                    Game.boardSimplified[newY+yVector][newX] = pieceSymbol.toLowerCase() === pieceSymbol ? "e" : "E";
+                }
+
                 // playing the sound of the move
                 if(!castling.kingside && !castling.queenside) {
                     let audio = new Audio(pieceMoveSound);
@@ -323,7 +346,7 @@ class Game extends Component {
                     let audio = new Audio(castleSound);
                     audio.play().catch();
                 }
-                
+
                 // saving the last position
                 Game.lastX = newX;
                 Game.lastY = newY;
@@ -472,7 +495,7 @@ class Game extends Component {
                 this.board.turn = lastPart[1];
 
                 // castling rights
-                this.board.castlingRights = lastPart[2];
+                this.board.castlingRights = this.parseFENCastlingRights(lastPart[2]);
 
                 // saving raw en passants possibilities
                 this.board.en_passants = lastPart[3];
@@ -517,6 +540,12 @@ class Game extends Component {
             || number === "6"
             || number === "7"
             || number === "8";
+    }
+
+    parseFENCastlingRights(castlingRights) {
+        for(let i=0; i<castlingRights.length; i++) {
+            this.castlingRights.push(castlingRights[i]);
+        }
     }
 
     render() {

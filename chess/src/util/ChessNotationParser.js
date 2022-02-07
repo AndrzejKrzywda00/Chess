@@ -31,3 +31,5 @@ class ChessNotationParser {
     }
 
 }
+
+export default ChessNotationParser;
