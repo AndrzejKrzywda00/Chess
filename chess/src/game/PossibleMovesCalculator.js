@@ -158,7 +158,7 @@ class PossibleMovesCalculator {
         let opponentPieces = allPieces.get(opponentColor);
         let possibleOpponentMoves = this.calculate();
 
-        
+
 
     }
 
