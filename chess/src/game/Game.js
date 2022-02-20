@@ -22,6 +22,7 @@ import "./Game.css";
 import onDragStart from "./move_handlers/OnDragStart";
 import onDragMove from "./move_handlers/OnDragMove";
 import onPieceClicked from "./operational_click_handlers/OnPieceClicked";
+import Pieces from "../util/Pieces";
 
 class Game extends Component {
 
@@ -210,6 +211,7 @@ class Game extends Component {
 
         this.cursor = "grab";
         let scale = Game.scale;
+        let pieces = new Pieces();
 
         try {
 
@@ -396,37 +398,6 @@ class Game extends Component {
         this.zIndex = 65;
         this.dragging = false;
         this.data = null;
-    }
-
-    /*
-    This method calculates all possible moves for the clicked piece
-     */
-    onPieceClicked() {
-
-        let scale = this.scale;
-
-        let x = Math.floor(Game.startingX/scale);
-        let y = Math.floor(Game.startingY/scale);
-
-        let pieceName = this.board.data[y][x];
-        let color = pieceName.toLowerCase() === pieceName ? "black" : "white";
-
-        let calculator = new PossibleMovesCalculator(
-            this.possibleMoves,
-            pieceName,
-            color,
-            this.board.data,
-            {x: x, y: y},
-            this.castlingRights,
-            "");
-
-        Game.pieceMoves = calculator.getFilteredMoves();
-
-        Game.boardSimplified = this.board.data;
-        Game.sprites = this.sprites;
-        Game.castlingRights = this.castlingRights;
-        Game.lastCastleData = this.lastCastleData;
-        Game.scale = this.scale;
     }
 
     /*
