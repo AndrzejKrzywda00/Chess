@@ -2,6 +2,7 @@
 This is the main class to calculate all the possible moves the selected piece can make in position.
  */
 import {act} from "@testing-library/react";
+import Pieces from "../../util/Pieces";
 
 class PossibleMovesCalculator {
 
@@ -24,18 +25,21 @@ class PossibleMovesCalculator {
 
     calculate() {
 
+        let pieces = new Pieces();
+        let symbols = pieces.PieceName;
+
         let x = this.position.x;
         let y = this.position.y;
         let board = this.board;
         let moves = this.moves;
 
-        console.log(this.castlingRights);
-
+        // creating map of pairs
+        // "color" => [array of symbols of pieces]
         let blackPieces = ["r","n","b","q","k","p","e"];
         let whitePieces = ["R","N","B","Q","K","P","E"];
         let allMoves = new Map();
-        allMoves.set("black", blackPieces);
-        allMoves.set("white", whitePieces);
+        allMoves.set(pieces.PieceColor.Black, blackPieces);
+        allMoves.set(pieces.PieceColor.White, whitePieces);
 
         let rejectedMoves = [];
 
@@ -56,8 +60,8 @@ class PossibleMovesCalculator {
                 let xPosition = parseInt(x + move[1]);
                 let playersPieces = allMoves.get(this.color);
 
-                if(board[yPosition][xPosition] !== "0" && playersPieces.includes(board[yPosition][xPosition])) {
-                    if(this.pieceName.toLowerCase() === "k" && move[0] === 0) {
+                if(board[yPosition][xPosition] !== symbols.Empty && playersPieces.includes(board[yPosition][xPosition])) {
+                    if(this.pieceName.toLowerCase() === symbols.BlackKing && move[0] === 0) {
                         if(move[1] !== 3 && move[1] !== -4) {
                             rejectedMoves.push(move);
                         }
@@ -68,7 +72,7 @@ class PossibleMovesCalculator {
                 }
 
                 // check if the move is not blocked by any piece (for any piece that is not a knight)
-                if(this.pieceName.toLowerCase() !== "n") {
+                if(this.pieceName.toLowerCase() !== symbols.BlackKnight) {
 
                     let yIterator = Math.sign(move[0]);
                     let xIterator = Math.sign(move[1]);
@@ -76,7 +80,7 @@ class PossibleMovesCalculator {
                     let currentY = y + yIterator;
 
                     while(currentX !== xPosition || currentY !== yPosition) {
-                        if(board[currentY][currentX] !== "0") {
+                        if(board[currentY][currentX] !== symbols.Empty) {
                             rejectedMoves.push(move);
                         }
                         currentX += xIterator;
@@ -85,16 +89,16 @@ class PossibleMovesCalculator {
                 }
 
                 // filter out not permitted moves for a pawn
-                if(this.pieceName.toLowerCase() === "p") {
+                if(this.pieceName.toLowerCase() === symbols.BlackPawn) {
 
                     // double move only on 6th rank for down and 1st rank for up
-                    let allowedRank = this.color === "black" ? 1 : 6;
+                    let allowedRank = this.color === pieces.PieceColor.Black ? 1 : 6;
                     if(y !== allowedRank) {
                         if(Math.abs(move[0]) === 2) rejectedMoves.push(move);
                     }
 
                     // second removing taking the piece move, when there is no opponent
-                    let oppositeColor = this.color === "white" ? "black" : "white";
+                    let oppositeColor = this.color === pieces.PieceColor.White ? pieces.PieceColor.Black : pieces.PieceColor.White;
                     let opponentPieces = allMoves.get(oppositeColor);
 
                     if(Math.abs(move[0]) === 1 && Math.abs(move[1]) === 1) {
@@ -104,7 +108,7 @@ class PossibleMovesCalculator {
                     }
 
                     if(move[1] === 0) {
-                        if(board[yPosition][xPosition] !== "0") {
+                        if(board[yPosition][xPosition] !== symbols.Empty) {
                             rejectedMoves.push(move);
                         }
                     }
@@ -112,18 +116,18 @@ class PossibleMovesCalculator {
                 }
 
                 // remove all moves that are not valid for a king
-                if(this.pieceName.toLowerCase() === "k") {
+                if(this.pieceName.toLowerCase() === symbols.BlackKing) {
 
                     let activeCastleRight = null;
                     if(move[0] === 0) {
                         if(move[1] === 3) {
-                            activeCastleRight = this.color === "white" ? "K" : "k";
+                            activeCastleRight = this.color === pieces.PieceColor.White ? symbols.WhiteKing : symbols.BlackKing;
                             if(!this.castlingRights.includes(activeCastleRight)) {
                                 rejectedMoves.push(move);
                             }
                         }
                         if(move[1] === -4) {
-                            activeCastleRight = this.color === "white" ? "Q" : "q";
+                            activeCastleRight = this.color === pieces.PieceColor.White ? symbols.WhiteQueen : symbols.BlackQueen;
                             if(!this.castlingRights.includes(activeCastleRight)) {
                                 rejectedMoves.push(move);
                             }
@@ -157,8 +161,6 @@ class PossibleMovesCalculator {
 
         let opponentPieces = allPieces.get(opponentColor);
         let possibleOpponentMoves = this.calculate();
-
-
 
     }
 

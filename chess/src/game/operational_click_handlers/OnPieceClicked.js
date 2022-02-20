@@ -1,4 +1,4 @@
-import PossibleMovesCalculator from "../PossibleMovesCalculator";
+import PossibleMovesCalculator from "../engine/PossibleMovesCalculator";
 import Game from "../Game";
 import Pieces from "../../util/Pieces";
 

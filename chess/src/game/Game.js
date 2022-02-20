@@ -14,14 +14,14 @@ import B from "../img/white_bishop_2.png";
 import p from "../img/black_pawn_2.png";
 import P from "../img/white_pawn_2.png";
 import q from "../img/black_queen_2.png";
-import moves from "./Moves";
-import PossibleMovesCalculator from "./PossibleMovesCalculator";
+import moves from "./engine/Moves";
 import pieceMoveSound from "../sounds/pieceMove.mp3";
 import castleSound from "../sounds/castling_sound_2 (2).mp3";
 import "./Game.css";
 import onDragStart from "./move_handlers/OnDragStart";
 import onDragMove from "./move_handlers/OnDragMove";
 import onPieceClicked from "./operational_click_handlers/OnPieceClicked";
+import onPieceRevoked from "./operational_click_handlers/OnPieceRevoked";
 import Pieces from "../util/Pieces";
 
 class Game extends Component {
@@ -194,10 +194,10 @@ class Game extends Component {
                     line.push(piece);
                     piece
                         .addListener('pointerdown', onDragStart)
-                        .on('pointerup', this.onDragEnd)
-                        .on('pointerdown', onPieceClicked, this)
-                        .on('pointerup', this.onPieceRevoked, this)
-                        .on('pointerupoutside', this.onDragEnd)
+                        .addListener('pointerup', this.onDragEnd)
+                        .addListener('pointerdown', onPieceClicked, this)
+                        .addListener('pointerup', onPieceRevoked, this)
+                        .addListener('pointerupoutside', this.onDragEnd)
                         .addListener('pointermove', onDragMove);
                 } catch (exception) {
                 }
@@ -398,70 +398,6 @@ class Game extends Component {
         this.zIndex = 65;
         this.dragging = false;
         this.data = null;
-    }
-
-    /*
-    Listener of revoking the grab of the piece
-    Performs tasks related to the class, so
-    Removing the sprites from the grid
-    And updating the virtual board of sprites
-     */
-    onPieceRevoked() {
-
-        let scale = this.scale;
-
-        if(Game.moveValid) {
-
-            let newY = Game.lastY;
-            let newX = Game.lastX;
-
-            let oldY = Math.floor(Game.startingY/scale);
-            let oldX = Math.floor(Game.startingX/scale);
-
-            this.application.stage.removeChild(this.sprites[newY][newX]);
-
-            if(Game.lastCastleData != null) {
-
-                let castlingType = Game.lastCastleData;
-
-                let rookOffsets = new Map();
-                rookOffsets.set("Q", 3);
-                rookOffsets.set("q", 3);
-                rookOffsets.set("K", -2);
-                rookOffsets.set("k", -2);
-
-                let oldRookX = null;
-                let oldRookY = null;
-                if(castlingType === "Q" || castlingType === "q") {
-                    oldRookX = 0;
-                }
-                if(castlingType === "K" || castlingType === "k") {
-                    oldRookX = 7;
-                }
-                if(castlingType === "K" || castlingType === "Q") {
-                    oldRookY = 7;
-                }
-                if(castlingType === "k" || castlingType === "q") {
-                    oldRookY = 0;
-                }
-
-                this.sprites[oldRookY][oldRookX].x = scale*(oldRookX+rookOffsets.get(castlingType))+scale/2;
-                this.sprites[oldRookY][oldRookX+rookOffsets.get(castlingType)] = this.sprites[oldRookY][oldRookX];
-                this.sprites[oldRookY][oldRookX] = undefined;
-            }
-
-            // removing the chosen sprite from the board
-            Game.sprites[newY][newX] = Game.sprites[oldY][oldX];
-            Game.sprites[oldY][oldX] = undefined;
-        }
-
-        this.lastCastleData = null;
-        this.board.data = Game.boardSimplified;
-        this.sprites = Game.sprites;
-        this.lastX = Game.lastX;
-        this.lastY = Game.lastY;
-        this.castlingRights = Game.castlingRights;
-        Game.moveValid = false;
     }
 
     parseFen(fen) {

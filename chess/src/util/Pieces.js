@@ -5,66 +5,69 @@ Such as: finding the color of the piece by the name etc.
  */
 class Pieces {
 
+    // TODO -- move this to standard FEN notation
+    /*
+    BE CAREFUL
+    this is non standard notation of the chess position
+    not matching FEN - because using 'E' and 'e' for en-passant
+    Enum for piece names to use in universal and clean way.
+     */
+    PieceName = {
+
+        // --- black ---
+        BlackRook: "r",
+        BlackKnight: "n",
+        BlackBishop: "b",
+        BlackQueen: "q",
+        BlackKing: "k",
+        BlackPawn: "p",
+        BlackEnPassant: "e",
+
+        // --- white ---
+        WhiteRook: "R",
+        WhiteKnight: "N",
+        WhiteBishop: "B",
+        WhiteQueen: "Q",
+        WhiteKing: "K",
+        WhitePawn: "P",
+        WhiteEnPassant: "E",
+
+        // --- empty ---
+        Empty: "0"
+    }
+
+    /*
+    Enum for piece color
+    */
+    PieceColor = {
+
+        White: "white",
+        Black: "black"
+
+    }
+
     constructor(args) {
 
-        // TODO -- move this to standard FEN notation
         /*
-        BE CAREFUL
-        this is non standard notation of the chess position
-        not matching FEN - because using 'E' and 'e' for en-passant
-        Enum for piece names to use in universal and clean way.
-         */
-        const PieceName = {
-
-            // --- black ---
-            BlackRook: "r",
-            BlackKnight: "n",
-            BlackBishop: "b",
-            BlackQueen: "q",
-            BlackKing: "k",
-            BlackPawn: "p",
-            BlackEnPassant: "e",
-
-            // --- white ---
-            WhiteRook: "R",
-            WhiteKnight: "N",
-            WhiteBishop: "B",
-            WhiteQueen: "Q",
-            WhiteKing: "K",
-            WhitePawn: "P",
-            WhiteEnPassant: "E"
-        }
-
-        /*
-        Enum for piece color
-         */
-        const PieceColor = {
-
-            White: "white",
-            Black: "black"
-
-        }
-
-        /*
-        The map to connect colors with the
+        The map to connect colors with the names.
          */
         this.colorMap = new Map();
 
-        this.colorMap.set(PieceName.BlackRook, PieceColor.Black);
-        this.colorMap.set(PieceName.BlackKnight, PieceColor.Black);
-        this.colorMap.set(PieceName.BlackBishop, PieceColor.Black);
-        this.colorMap.set(PieceName.BlackQueen, PieceColor.Black);
-        this.colorMap.set(PieceName.BlackKnight, PieceColor.Black);
-        this.colorMap.set(PieceName.BlackPawn, PieceColor.Black);
-        this.colorMap.set(PieceName.BlackEnPassant, PieceColor.Black);
+        this.colorMap.set(this.PieceName.BlackRook, this.PieceColor.Black);
+        this.colorMap.set(this.PieceName.BlackKnight, this.PieceColor.Black);
+        this.colorMap.set(this.PieceName.BlackBishop, this.PieceColor.Black);
+        this.colorMap.set(this.PieceName.BlackQueen, this.PieceColor.Black);
+        this.colorMap.set(this.PieceName.BlackKnight, this.PieceColor.Black);
+        this.colorMap.set(this.PieceName.BlackPawn, this.PieceColor.Black);
+        this.colorMap.set(this.PieceName.BlackEnPassant, this.PieceColor.Black);
 
-        this.colorMap.set(PieceName.WhiteRook, PieceColor.White);
-        this.colorMap.set(PieceName.WhiteKnight, PieceColor.White);
-        this.colorMap.set(PieceName.WhiteBishop, PieceColor.White);
-        this.colorMap.set(PieceName.WhiteQueen, PieceColor.White);
-        this.colorMap.set(PieceName.WhiteKing, PieceColor.White);
-        this.colorMap.set(PieceName.WhitePawn, PieceColor.White);
-        this.colorMap.set(PieceName.WhiteEnPassant, PieceColor.White);
+        this.colorMap.set(this.PieceName.WhiteRook, this.PieceColor.White);
+        this.colorMap.set(this.PieceName.WhiteKnight, this.PieceColor.White);
+        this.colorMap.set(this.PieceName.WhiteBishop, this.PieceColor.White);
+        this.colorMap.set(this.PieceName.WhiteQueen, this.PieceColor.White);
+        this.colorMap.set(this.PieceName.WhiteKing, this.PieceColor.White);
+        this.colorMap.set(this.PieceName.WhitePawn, this.PieceColor.White);
+        this.colorMap.set(this.PieceName.WhiteEnPassant, this.PieceColor.White);
     }
 
     // getter for piece color
