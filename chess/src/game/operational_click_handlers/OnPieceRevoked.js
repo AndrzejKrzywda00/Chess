@@ -54,4 +54,12 @@ export default function onPieceRevoked() {
         Game.sprites[newY][newX] = Game.sprites[oldY][oldX];
         Game.sprites[oldY][oldX] = undefined;
     }
+
+    this.lastCastleData = null;
+    this.board.data = Game.boardSimplified;
+    this.sprites = Game.sprites;
+    this.lastX = Game.lastX;
+    this.lastY = Game.lastY;
+    this.castlingRights = Game.castlingRights;
+    Game.moveValid = false;
 }

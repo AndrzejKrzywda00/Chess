@@ -1,9 +1,8 @@
+import Pieces from "../../util/Pieces";
+
 /*
 This is the main class to calculate all the possible moves the selected piece can make in position.
  */
-import {act} from "@testing-library/react";
-import Pieces from "../../util/Pieces";
-
 class PossibleMovesCalculator {
 
     constructor(allMoves,

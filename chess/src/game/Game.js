@@ -194,10 +194,10 @@ class Game extends Component {
                     line.push(piece);
                     piece
                         .addListener('pointerdown', onDragStart)
-                        .addListener('pointerup', this.onDragEnd)
+                        .on('pointerup', this.onDragEnd)
                         .addListener('pointerdown', onPieceClicked, this)
                         .addListener('pointerup', onPieceRevoked, this)
-                        .addListener('pointerupoutside', this.onDragEnd)
+                        .on('pointerupoutside', this.onDragEnd)
                         .addListener('pointermove', onDragMove);
                 } catch (exception) {
                 }
@@ -211,7 +211,6 @@ class Game extends Component {
 
         this.cursor = "grab";
         let scale = Game.scale;
-        let pieces = new Pieces();
 
         try {
 
