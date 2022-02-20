@@ -21,6 +21,7 @@ import castleSound from "../sounds/castling_sound_2 (2).mp3";
 import "./Game.css";
 import onDragStart from "./move_handlers/OnDragStart";
 import onDragMove from "./move_handlers/OnDragMove";
+import onPieceClicked from "./operational_click_handlers/OnPieceClicked";
 
 class Game extends Component {
 
@@ -193,7 +194,7 @@ class Game extends Component {
                     piece
                         .addListener('pointerdown', onDragStart)
                         .on('pointerup', this.onDragEnd)
-                        .on('pointerdown', this.onPieceClicked, this)
+                        .on('pointerdown', onPieceClicked, this)
                         .on('pointerup', this.onPieceRevoked, this)
                         .on('pointerupoutside', this.onDragEnd)
                         .addListener('pointermove', onDragMove);
