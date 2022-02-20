@@ -19,6 +19,8 @@ import PossibleMovesCalculator from "./PossibleMovesCalculator";
 import pieceMoveSound from "../sounds/pieceMove.mp3";
 import castleSound from "../sounds/castling_sound_2 (2).mp3";
 import "./Game.css";
+import onDragStart from "./move_handlers/OnDragStart";
+import onDragMove from "./move_handlers/OnDragMove";
 
 class Game extends Component {
 
@@ -149,7 +151,7 @@ class Game extends Component {
         if(i === rows-1) {
             let color = j%2 !== 0 ? lightColorHex : darkColorHex;
             let text = new PIXI.Text(rowText[j],{fill: color, fontSize: 18});
-            text.setTransform(scale*j+0.84*scale,scale*i+0.75*scale);
+            text.setTransform(scale*j+0.84*scale,scale*i+0.8*scale);
             sprite.addChild(text);
         }
 
@@ -189,27 +191,18 @@ class Game extends Component {
                     this.application.stage.addChild(piece);
                     line.push(piece);
                     piece
-                        .on('pointerdown', this.onDragStart)
+                        .addListener('pointerdown', onDragStart)
                         .on('pointerup', this.onDragEnd)
-                        .on('pointerdown', this.onPieceClicked, this)       // passing reference to the class to make it easier to access objects
+                        .on('pointerdown', this.onPieceClicked, this)
                         .on('pointerup', this.onPieceRevoked, this)
                         .on('pointerupoutside', this.onDragEnd)
-                        .on('pointermove', this.onDragMove);
+                        .addListener('pointermove', onDragMove);
                 } catch (exception) {
                 }
             }
             this.sprites.push(line);
         }
 
-    }
-
-    onDragStart(event) {
-        this.cursor = "grabbing";
-        Game.startingX = this.x;
-        Game.startingY = this.y;
-        this.data = event.data;
-        this.zIndex = 100;
-        this.dragging = true;
     }
 
     onDragEnd() {
@@ -402,14 +395,6 @@ class Game extends Component {
         this.zIndex = 65;
         this.dragging = false;
         this.data = null;
-    }
-
-    onDragMove() {
-        if(this.dragging) {
-            const newPosition = this.data.getLocalPosition(this.parent);
-            this.x = newPosition.x;
-            this.y = newPosition.y;
-        }
     }
 
     /*
