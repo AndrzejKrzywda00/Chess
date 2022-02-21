@@ -54,7 +54,7 @@ class Pieces {
         this.colorMap = new Map();
 
         this.colorMap.set(this.PieceName.BlackRook, this.PieceColor.Black);
-        this.colorMap.set(this.PieceName.BlackKnight, this.PieceColor.Black);
+        this.colorMap.set(this.PieceName.BlackKing, this.PieceColor.Black);
         this.colorMap.set(this.PieceName.BlackBishop, this.PieceColor.Black);
         this.colorMap.set(this.PieceName.BlackQueen, this.PieceColor.Black);
         this.colorMap.set(this.PieceName.BlackKnight, this.PieceColor.Black);

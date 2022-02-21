@@ -59,7 +59,7 @@ class PossibleMovesCalculator {
                 let xPosition = parseInt(x + move[1]);
                 let playersPieces = allMoves.get(this.color);
 
-                if(board[yPosition][xPosition] !== symbols.Empty && playersPieces.includes(board[yPosition][xPosition])) {
+                if (board[yPosition][xPosition] !== symbols.Empty && playersPieces.includes(board[yPosition][xPosition])) {
                     if(this.pieceName.toLowerCase() === symbols.BlackKing && move[0] === 0) {
                         if(move[1] !== 3 && move[1] !== -4) {
                             rejectedMoves.push(move);
@@ -146,6 +146,8 @@ class PossibleMovesCalculator {
                 acceptedMoves.push(moves[i]);
             }
         }
+
+        console.log(acceptedMoves);
 
         return acceptedMoves;
     }

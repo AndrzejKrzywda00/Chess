@@ -13,14 +13,16 @@ export default function onPieceClicked() {
 
     // getting the normalized position of the element on the board
     // x => {0,7} & x => {0,7}
-    let x = Math.floor(Game.startingX/scale);
-    let y = Math.floor(Game.startingY/scale);
+    let x = Math.floor(Game.startingX / scale);
+    let y = Math.floor(Game.startingY / scale);
 
     // getting the short name of the virtualBoard
     let pieceName = this.board.data[y][x];
 
     // getting the real color of the piece (black or white)
     let color = new Pieces().getPieceColor(pieceName);
+    console.log(color);
+    console.log(pieceName);
 
     // creating the instance of the calculator of the possible moves
     let calculator = new PossibleMovesCalculator(
