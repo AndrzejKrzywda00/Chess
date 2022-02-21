@@ -21,8 +21,6 @@ export default function onPieceClicked() {
 
     // getting the real color of the piece (black or white)
     let color = new Pieces().getPieceColor(pieceName);
-    console.log(color);
-    console.log(pieceName);
 
     // creating the instance of the calculator of the possible moves
     let calculator = new PossibleMovesCalculator(

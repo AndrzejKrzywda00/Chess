@@ -60,7 +60,9 @@ class PossibleMovesCalculator {
                 let playersPieces = allMoves.get(this.color);
 
                 if (board[yPosition][xPosition] !== symbols.Empty && playersPieces.includes(board[yPosition][xPosition])) {
-                    if(this.pieceName.toLowerCase() === symbols.BlackKing && move[0] === 0) {
+
+                    if (this.pieceName.toLowerCase() === symbols.BlackKing && move[0] === 0)
+                    {
                         if(move[1] !== 3 && move[1] !== -4) {
                             rejectedMoves.push(move);
                         }
