@@ -1,22 +1,23 @@
 import Pieces from "../../util/Pieces";
+import moves from "./Moves";
 
 /*
 This is the main class to calculate all the possible moves the selected piece can make in position.
  */
 class PossibleMovesCalculator {
 
-    constructor(allMoves,
-                pieceName,
+    constructor(pieceName,
                 color,
                 board,
                 position,
                 castlingRights,
                 enPassantPossibilities,
                 blackKingPosition,
-                whiteKingPosition)
+                whiteKingPosition,
+                evaluateCheck)
     {
         this.board = board;
-        this.moves = allMoves.get(pieceName);
+        this.moves = moves.get(pieceName);
         this.castlingRights = castlingRights;
         this.enPassant = enPassantPossibilities;
         this.position = position;
@@ -24,12 +25,10 @@ class PossibleMovesCalculator {
         this.pieceName = pieceName;
         this.whiteKingPostion = whiteKingPosition;
         this.blackKingPosition = blackKingPosition;
+        this.evaluateCheck = evaluateCheck;
     }
 
     calculate() {
-
-        console.log(this.whiteKingPostion);
-        console.log(this.blackKingPosition);
 
         let pieces = new Pieces();
         let symbols = pieces.PieceName;
@@ -65,6 +64,8 @@ class PossibleMovesCalculator {
                 let yPosition = parseInt(y + move[0]);
                 let xPosition = parseInt(x + move[1]);
                 let playersPieces = allMoves.get(this.color);
+                console.log(playersPieces);
+                console.log(this.color);
 
                 if (board[yPosition][xPosition] !== symbols.Empty && playersPieces.includes(board[yPosition][xPosition])) {
 
@@ -144,17 +145,37 @@ class PossibleMovesCalculator {
 
                 }
 
-                /*
-                let virtualBoard = this.board;
-                virtualBoard[yPosition][xPosition] = this.pieceName;
-                virtualBoard[y][x] = symbols.Empty;
+                if(this.evaluateCheck) {
 
-                let opponentColor = pieces.getPieceColor(this.pieceName);
+                    let virtualBoard = [];
 
-                if(false) {
-                    this.doesAnyOpponentMoveTakeKing(virtualBoard, opponentColor, {i:0, j:0});
+                    for(let f=0; f<8; f++) {
+                        let line = [];
+                        for(let g=0; g<8; g++) {
+                            line.push(this.board[f][g]);
+                        }
+                        virtualBoard.push(line);
+                    }
+
+                    virtualBoard[y][x] = symbols.Empty;
+                    virtualBoard[yPosition][xPosition] = this.pieceName;
+                    let opponentColor = this.color === pieces.PieceColor.White ? pieces.PieceColor.Black : pieces.PieceColor.White;
+                    let playerKingPosition = this.color === pieces.PieceColor.White ? this.whiteKingPostion : this.blackKingPosition;
+
+                    this.doesAnyOpponentMoveTakeKing(virtualBoard, opponentColor, playerKingPosition);
                 }
-                 */
+
+                if(!this.evaluateCheck) {
+
+                    let playerKing = this.color === pieces.PieceColor.White ? pieces.PieceName.BlackKing : pieces.PieceName.WhiteKing;
+                    if(this.board[yPosition][xPosition] === playerKing) {
+                        console.log("opponent move attacks king after this move");
+                    }
+                    else {
+                        console.log("opponent move does not attack king after this move");
+                    }
+                }
+
             }
 
         }
@@ -167,7 +188,7 @@ class PossibleMovesCalculator {
             }
         }
 
-        console.log(acceptedMoves);
+        //console.log(acceptedMoves);
 
         return acceptedMoves;
     }
@@ -178,7 +199,7 @@ class PossibleMovesCalculator {
      * @param opponentColor is the color we are checking for moves that can take the king.
      * @param kingPosition is the position of the friendly king
      */
-    doesAnyOpponentMoveTakeKing(virtualBoard, opponentColor, kingPosition) {
+    doesAnyOpponentMoveTakeKing(virtualBoard, opponentColor, playerKingPosition) {
 
         let pieces = new Pieces();
         let opponentPiecesMap = new Map();
@@ -188,12 +209,32 @@ class PossibleMovesCalculator {
         for(let i=0; i<8; i++) {
             for(let j=0; j<8; j++) {
                 if(pieces.getPieceColor(virtualBoard[i][j]) === opponentColor) {
-                    opponentPiecesMap.set({i:i, j:j}, virtualBoard[i][j]);
+                    opponentPiecesMap.set({y:i, x:j}, virtualBoard[i][j]);
                 }
             }
         }
 
+        let opponentPositions = Array.from(opponentPiecesMap.keys());
+
         // for each piece find out if it takes the king
+        for(let w=0; w<opponentPositions.length; w++) {
+
+            console.log(opponentColor);
+
+            let checkCalculator = new PossibleMovesCalculator(
+                opponentPiecesMap.get(opponentPositions[w]),
+                opponentColor,
+                virtualBoard,
+                opponentPositions[w],
+                this.castlingRights,
+                this.enPassant,
+                this.blackKingPosition,
+                this.whiteKingPostion,
+                false);
+
+            let opponentMovesAttackingKing = checkCalculator.calculate();
+
+        }
 
     }
 

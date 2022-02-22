@@ -24,7 +24,6 @@ export default function onPieceClicked() {
 
     // creating the instance of the calculator of the possible moves
     let calculator = new PossibleMovesCalculator(
-        this.possibleMoves,
         pieceName,
         color,
         this.board.data,
@@ -32,7 +31,8 @@ export default function onPieceClicked() {
         this.castlingRights,
         "",
         this.blackKingPosition,
-        this.whiteKingPosition);
+        this.whiteKingPosition,
+        true);
 
     // getting filtered moves - moves which are possible in the position on the virtual board.
     Game.pieceMoves = calculator.getFilteredMoves();
