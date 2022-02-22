@@ -57,8 +57,15 @@ class Game extends Component {
         this.lastX = null;
         this.lastY = null;
         this.moveValid = false;
-        this.lastCastleData = null;
         this.castlingRights = [];
+        this.blackKingPosition = {
+            i: 0, j: 4
+        };
+        this.whiteKingPosition = {
+            i: 7, j: 4
+        };
+
+        // taking data from props
         this.pattern = props.boardPattern;
         this.choosePattern = props.chooseGradientOverPattern;
     }
@@ -150,14 +157,14 @@ class Game extends Component {
 
         if(i === rows-1) {
             let color = j%2 !== 0 ? lightColorHex : darkColorHex;
-            let text = new PIXI.Text(rowText[j],{fill: color, fontSize: 18});
-            text.setTransform(scale*j+0.84*scale,scale*i+0.8*scale);
+            let text = new PIXI.Text(rowText[j],{fill: color, fontSize: 22});
+            text.setTransform(scale*j+0.84*scale,scale*i+0.75*scale);
             sprite.addChild(text);
         }
 
         if(j === 0) {
             let color = i%2 === 0 ? lightColorHex : darkColorHex;
-            let text = new PIXI.Text(columnText[i],{fill: color, fontSize: 18});
+            let text = new PIXI.Text(columnText[i],{fill: color, fontSize: 22});
             text.setTransform(scale*j+0.05*scale,scale*i+0.05*scale);
             sprite.addChild(text);
         }

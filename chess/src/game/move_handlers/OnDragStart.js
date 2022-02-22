@@ -23,5 +23,4 @@ export default function onDragStart(event) {
     this.data = event.data;
     this.zIndex = 100;
     this.dragging = true;
-
 }

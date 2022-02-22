@@ -11,7 +11,9 @@ class PossibleMovesCalculator {
                 board,
                 position,
                 castlingRights,
-                enPassantPossibilities)
+                enPassantPossibilities,
+                blackKingPosition,
+                whiteKingPosition)
     {
         this.board = board;
         this.moves = allMoves.get(pieceName);
@@ -20,9 +22,14 @@ class PossibleMovesCalculator {
         this.position = position;
         this.color = color;
         this.pieceName = pieceName;
+        this.whiteKingPostion = whiteKingPosition;
+        this.blackKingPosition = blackKingPosition;
     }
 
     calculate() {
+
+        console.log(this.whiteKingPostion);
+        console.log(this.blackKingPosition);
 
         let pieces = new Pieces();
         let symbols = pieces.PieceName;
@@ -137,6 +144,17 @@ class PossibleMovesCalculator {
 
                 }
 
+                /*
+                let virtualBoard = this.board;
+                virtualBoard[yPosition][xPosition] = this.pieceName;
+                virtualBoard[y][x] = symbols.Empty;
+
+                let opponentColor = pieces.getPieceColor(this.pieceName);
+
+                if(false) {
+                    this.doesAnyOpponentMoveTakeKing(virtualBoard, opponentColor, {i:0, j:0});
+                }
+                 */
             }
 
         }
@@ -154,19 +172,30 @@ class PossibleMovesCalculator {
         return acceptedMoves;
     }
 
-    calculatePositionsControlledByOpponent(opponentColor) {
+    /***
+     * A function to test if the move is legal: so if it does not generate check on our king.
+     * @param virtualBoard is the board AFTER the move we are checking
+     * @param opponentColor is the color we are checking for moves that can take the king.
+     * @param kingPosition is the position of the friendly king
+     */
+    doesAnyOpponentMoveTakeKing(virtualBoard, opponentColor, kingPosition) {
 
-        // so calculate all positions controlled by opponent
-        // understood as: fields where opponent can move in next move + counting the fields on which are his pieces
-        let allPieces = new Map();
-        allPieces.set("white", ["R","B","N","Q","K","P"]);
-        allPieces.set("black", ["r","b","n","q","k","p"]);
+        let pieces = new Pieces();
+        let opponentPiecesMap = new Map();
 
-        let opponentPieces = allPieces.get(opponentColor);
-        let possibleOpponentMoves = this.calculate();
+        // collecting all the opponent pieces that remain after move of the player.
+        // saving them in manner [object: {i: 0, j:0}] => "pieceName"
+        for(let i=0; i<8; i++) {
+            for(let j=0; j<8; j++) {
+                if(pieces.getPieceColor(virtualBoard[i][j]) === opponentColor) {
+                    opponentPiecesMap.set({i:i, j:j}, virtualBoard[i][j]);
+                }
+            }
+        }
+
+        // for each piece find out if it takes the king
 
     }
-
 
     getFilteredMoves() {
         return this.calculate();

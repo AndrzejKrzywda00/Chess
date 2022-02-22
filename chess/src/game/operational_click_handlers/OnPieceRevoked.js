@@ -61,5 +61,7 @@ export default function onPieceRevoked() {
     this.lastX = Game.lastX;
     this.lastY = Game.lastY;
     this.castlingRights = Game.castlingRights;
+    this.blackKingPosition = Game.blackKingPosition;
+    this.whiteKingPosition = Game.whiteKingPosition;
     Game.moveValid = false;
 }

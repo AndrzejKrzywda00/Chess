@@ -30,7 +30,9 @@ export default function onPieceClicked() {
         this.board.data,
         {x: x, y: y},
         this.castlingRights,
-        "");
+        "",
+        this.blackKingPosition,
+        this.whiteKingPosition);
 
     // getting filtered moves - moves which are possible in the position on the virtual board.
     Game.pieceMoves = calculator.getFilteredMoves();
@@ -40,5 +42,7 @@ export default function onPieceClicked() {
     Game.sprites = this.sprites;
     Game.castlingRights = this.castlingRights;
     Game.lastCastleData = this.lastCastleData;
+    Game.blackKingPosition = this.blackKingPosition;
+    Game.whiteKingPosition = this.whiteKingPosition;
     Game.scale = this.scale;
 }

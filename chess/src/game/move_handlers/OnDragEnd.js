@@ -1,6 +1,7 @@
 import pieceMoveSound from "../../sounds/pieceMove.mp3";
 import castleSound from "../../sounds/castling_sound_2 (2).mp3";
 import Game from "../Game";
+import Pieces from "../../util/Pieces";
 
 /*
 This handler takes care of all processes related to the sprite object that was dragged.
@@ -9,6 +10,7 @@ export default function onDragEnd() {
 
     this.cursor = "grab";
     let scale = Game.scale;
+    let pieces = new Pieces();
 
     try {
 
@@ -73,7 +75,6 @@ export default function onDragEnd() {
                     rights = ["q","k"];
                 }
                 Game.castlingRights = Game.castlingRights.filter(right => {
-                    console.log(!rights.includes(right));
                     return !rights.includes(right);
                 });
             }
@@ -111,8 +112,8 @@ export default function onDragEnd() {
             }
 
             // updating the coordinates of the sprite
-            this.x = (newX*scale)+scale/2;
-            this.y = (newY*scale)+scale/2;
+            this.x = (newX*scale) + scale/2;
+            this.y = (newY*scale) + scale/2;
 
             // updating the board object
             let pieceSymbol = Game.boardSimplified[oldY][oldX];
@@ -120,6 +121,14 @@ export default function onDragEnd() {
             // setting up new position in the virtual board
             Game.boardSimplified[oldY][oldX] = "0";
             Game.boardSimplified[newY][newX] = pieceSymbol;
+
+            // updating the position of the appropriate king
+            if(pieceSymbol === pieces.PieceName.BlackKing) {
+                Game.blackKingPosition = {i: newY, j: newX};
+            }
+            if(pieceSymbol === pieces.PieceName.WhiteKing) {
+                Game.whiteKingPosition = {i: newY, j: newX};
+            }
 
             // additionally moving the rook
             if(castling.queenside) {
